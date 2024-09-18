@@ -8,21 +8,31 @@ from scripts.joueur import Joueur
 from scripts.affichage import affichage
 
 tk=Tk()
-tk.title('Tetris')
-tk.attributes('-fullscreen', True)
+tk.title('Polytris')
+tk.geometry('1000x600')
+tk.minsize(width=200, height=180)
+tk.attributes('-fullscreen', False)
 
-screenDim=(tk.winfo_screenwidth(), tk.winfo_screenheight())
 color=((0,0,0),(0,255,255),(51,51,255),(255,153,51),(255,255,51),(0,204,0),(153,51,255),(204,0,0),(125,125,125),(64,64,64))
-gravCD=[1/2, 1/12]; moveCD=1/8; rotCD=1/8; hdCD=1/4
+gravCD=[50/100, 4/100]; moveCD=12/100; rotCD=12/100; hdCD=30/100
+
+screenDim=[1000,600]
 
 fpsLimiter=time()
 inputs=[[False for i in range(10)] for j in range(2)]
-imgGrid=[None, None]; imgBlocks=decoupe('sprites/blocksPreview.png',8,screenDim[1])
+imgGrid=[None, None]
+imgBlocks=decoupe('sprites/blocksPreview.png',8,screenDim[1])
 animMenu=ImageTk.PhotoImage(Image.open('sprites/fallingBlocks.png').resize((int(screenDim[1]/25*20),screenDim[1]),4))
 
 menuIdx=[0, time()]; state='Menu'
 
 joueur1=Joueur(0); joueur2=Joueur(1); timer=time()
+
+def resizeSprites():
+    global imgBlocks, animMenu
+
+    imgBlocks=decoupe('sprites/blocksPreview.png',8,screenDim[1])
+    animMenu=ImageTk.PhotoImage(Image.open('sprites/fallingBlocks.png').resize((int(screenDim[1]/25*20),screenDim[1]),4))
 
 def newGame(mode):
     global state, joueur1, joueur2, timer
@@ -38,7 +48,18 @@ def newGame(mode):
         state='Versus'
 
 def main():
-    global fpsLimiter, inputs, imgGrid, timer, menuIdx, state
+    global fpsLimiter, inputs, imgGrid, timer, menuIdx, state, screenDim
+
+    cSize=['','']; wGeometry=tk.winfo_geometry(); idx=[0,0]
+    while wGeometry[idx[0]]!='+':
+        if wGeometry[idx[0]]=='x':idx[1]+=1
+        else:cSize[idx[1]]+=wGeometry[idx[0]]
+        idx[0]+=1
+    cSize=[int(cSize[0]), int(cSize[1])]
+    if cSize!=screenDim and cSize!=[1,1]:
+        screenDim=cSize
+        can.config(width=screenDim[0], height=screenDim[1])
+        resizeSprites()
 
     if state=='Menu':
         if (time()-menuIdx[1])>1/6:
