@@ -14,6 +14,7 @@ class Joueur:
         self.currentBlock=Block(self.queue[0])
         self.inputIdx=inputIdx
         self.btb=False
+        self.animIdx=[]
         self.updateQueue()
 
     def gamePlay(self, inputs, gravCD, moveCD, rotCD, hdCD):
@@ -49,6 +50,8 @@ class Joueur:
                     self.updateQueue()
                     self.hold[1]=True
 
+        if len(self.animIdx)>0:self.finishAnim()
+
         return garbage
 
     def updateQueue(self):
@@ -58,14 +61,14 @@ class Joueur:
             if not self.queue.count(rand)>1:self.queue.append(rand)
 
     def delLine(self):
-        n=0; garbageY=None
+        n=0; garbageY=None; cTime=time()
 
         for j in range(20):
-            if 0 not in self.grid[j]:
+            if 0 not in self.grid[j] and 9 not in self.grid[j]:
                 self.score+=1; n+=1
-                self.grid.pop(j)
-                self.grid.insert(0, [0 for i in range(10)])
-                if garbageY==None:garbageY=j
+                self.grid[j]=[9 for i in range(10)]
+                self.animIdx.append([j,cTime])
+                if garbageY==None:garbageY=j 
 
         if n!=0:
             if n==1:n=0; self.btb=False
@@ -80,6 +83,20 @@ class Joueur:
 
         return garbageY,[[8 for i in range(10)] for j in range(n)]
     
+    def finishAnim(self):
+        #Bloc moche mais fonctionnel ?
+        compt=0; finAnim=[]
+        for j in range(len(self.animIdx)):
+            if (time()-self.animIdx[j][1])>0.3 or not self.game:
+                self.grid[self.animIdx[j][0]]=None
+                finAnim.append(j)
+        for j in finAnim:
+            self.animIdx.pop(j-compt); compt+=1
+        for j in range(20):
+            if self.grid[j]==None:
+                self.grid.pop(j)
+                self.grid.insert(0, [0 for i in range(10)])   
+
     def addLine(self, garbage):
         for i in garbage:
             self.grid.pop(0)

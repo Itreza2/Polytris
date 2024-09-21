@@ -73,9 +73,8 @@ def main():
 
     if state=='Solo':
         if joueur1.game:
-            joueur1.gamePlay(inputs, gravCD, moveCD, rotCD, hdCD)
-            
             if joueur1.score>=40:joueur1.game=False; timer[1]=time()
+            joueur1.gamePlay(inputs, gravCD, moveCD, rotCD, hdCD)
         
         elif  (time()-timer[0])<4 and (time()-timer[0])>3:joueur1.game=True
 

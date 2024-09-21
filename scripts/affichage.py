@@ -10,7 +10,7 @@ def affichage(can, screenDim, imgBlocks, imgGrid, joueur1, joueur2, timer, state
         can.create_image(screenDim[0]/5*3, int((time()*2)%(screenDim[1]/25))*25-screenDim[1], image=animMenu, anchor='nw')
 
         can.create_text(screenDim[0]/2, screenDim[1]/2-int(screenDim[1]/25)*7,
-                        text='TETRIS', anchor='center',
+                        text='POLYTRIS', anchor='center',
                         fill=('gainsboro'), font=('Arial', int(screenDim[1]/15), 'bold'))
         can.create_text(screenDim[0]/2, screenDim[1]/2-int(screenDim[1]/25)*2.5,
                         text='Sprint 40L', anchor='center',
@@ -30,6 +30,12 @@ def affichage(can, screenDim, imgBlocks, imgGrid, joueur1, joueur2, timer, state
         can.create_image(screenDim[0]/2-int(screenDim[1]/25)*6.25, screenDim[1]/2-int(screenDim[1]/25)*8.75,
                         image=imgBlocks[joueur1.hold[0]], anchor='center')
 
+        for i in joueur1.animIdx:
+            can.create_rectangle(screenDim[0]/2-int(screenDim[1]/25)*5, screenDim[1]/2-int(screenDim[1]/25)*10+int(screenDim[1]/25)*(i[0]+1),
+                                screenDim[0]/2+int(screenDim[1]/25)*5, screenDim[1]/2-int(screenDim[1]/25)*10+int(screenDim[1]/25)*i[0], width='0', fill='black')
+            can.create_rectangle(screenDim[0]/2-int(screenDim[1]/25)*5*(1-min(((time()-i[1])/0.3),1)), screenDim[1]/2-int(screenDim[1]/25)*10+int(screenDim[1]/25)*(i[0]+1),
+                                screenDim[0]/2+int(screenDim[1]/25)*5*(1-min(((time()-i[1])/0.3),1)), screenDim[1]/2-int(screenDim[1]/25)*10+int(screenDim[1]/25)*i[0], width='0', fill='white')
+
         can.create_rectangle(screenDim[0]/2+int(screenDim[1]/25)*5, screenDim[1]/2-int(screenDim[1]/25)*10,
                             screenDim[0]/2+int(screenDim[1]/25)*7.5, screenDim[1]/2-int(screenDim[1]/25)*2.5, width='5', outline='white')
         can.create_rectangle(screenDim[0]/2-int(screenDim[1]/25)*5, screenDim[1]/2-int(screenDim[1]/25)*10,
@@ -40,7 +46,7 @@ def affichage(can, screenDim, imgBlocks, imgGrid, joueur1, joueur2, timer, state
         can.create_text(screenDim[0]/2-int(screenDim[1]/25)*6.25, screenDim[1]/2-int(screenDim[1]/25)*6.25,
                         text=str(joueur1.score)+'/40', anchor='center',
                         fill='white', font=('Arial', int(screenDim[1]/40), 'bold'))
-        
+
         if joueur1.game:
             can.create_text(screenDim[0]/2-int(screenDim[1]/25)*6.25, screenDim[1]/2-int(screenDim[1]/25)*4.75,
                             text=str(int((time()-timer[0]-3)/60))+':'+('0' if int(time()-timer[0]-3)%60<10 else '')+str(int(time()-timer[0]-3)%60), 
