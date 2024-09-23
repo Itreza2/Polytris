@@ -70,3 +70,8 @@ def decoupe(path, lenght, screenHeight):
         im.crop((i*(im.size[0]/lenght),0,(i+1)*(im.size[0]/lenght),im.size[1])
                 ).resize((int(screenHeight/25)*3,int(screenHeight/25)*3),4)) 
         for i in range(lenght)]
+
+def toHex(n):
+    alphabet=('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f')
+    
+    return(alphabet[int(n/16)]+alphabet[n%16])

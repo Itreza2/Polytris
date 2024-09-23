@@ -3,7 +3,7 @@ from time import time
 from copy import deepcopy
 from PIL import Image, ImageTk
 
-from scripts.tools import createImage, decoupe
+from scripts.tools import createImage, decoupe, toHex
 from scripts.joueur import Joueur
 from scripts.affichage import affichage
 
@@ -32,7 +32,6 @@ def resizeSprites():
     global imgBlocks, animMenu
 
     imgBlocks=decoupe('sprites/blocksPreview.png',8,screenDim[1])
-    animMenu=ImageTk.PhotoImage(Image.open('sprites/fallingBlocks.png').resize((int(screenDim[1]/25*20),screenDim[1]),4))
 
 def newGame(mode):
     global state, joueur1, joueur2, timer
@@ -100,6 +99,10 @@ def main():
         imgGrid[1]=createImage(joueur2.currentBlock.renderBlock(deepcopy(joueur2.grid)), screenDim[1], color)
         fpsLimiter=time(); affichage(can, screenDim, imgBlocks, imgGrid, joueur1, joueur2, timer, state, menuIdx, animMenu)
 
+        can.config(bg='#'+str((toHex(int(time()*5)%150) if int(time()*5)%150<75 else toHex(150-int(time()*5)%150))+
+                            (toHex(200-int(time()*10)%200) if int(time()*10)%200<100 else toHex(int(time()*10)%200))+
+                            (toHex(150-int(time()*10)%150) if int(time()*10)%150<75 else toHex(int(time()*10)%150))))
+
     tk.after(1, main)
 
 def clavier(event):
@@ -150,7 +153,7 @@ def clavierRelease(event):
 
     elif var=='Escape':inputs[0][9]=False
 
-can=Canvas(tk, width=screenDim[0], height=screenDim[1], bg='black')
+can=Canvas(tk, width=screenDim[0], height=screenDim[1], bg='#808080')
 can.focus_set()
 can.bind("<Key>", clavier); can.bind("<KeyRelease>", clavierRelease)
 can.pack()
