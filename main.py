@@ -14,7 +14,7 @@ tk.minsize(width=200, height=180)
 tk.attributes('-fullscreen', False)
 
 color=((0,0,0),(0,255,255),(51,51,255),(255,153,51),(255,255,51),(0,204,0),(153,51,255),(204,0,0),(125,125,125),(64,64,64))
-gravCD=[50/100, 4/100]; moveCD=12/100; rotCD=12/100; hdCD=30/100
+moveCD=12/100; rotCD=12/100; hdCD=30/100; das=18/100
 
 screenDim=[1000,600]
 
@@ -26,7 +26,7 @@ animMenu=ImageTk.PhotoImage(Image.open('sprites/fallingBlocks.png').resize((int(
 
 menuIdx=[0, time()]; state='Menu'
 
-joueur1=Joueur(0); joueur2=Joueur(1); timer=time()
+joueur1=Joueur(0,False); joueur2=Joueur(1,False); timer=time()
 
 def resizeSprites():
     global imgBlocks, animMenu
@@ -36,13 +36,18 @@ def resizeSprites():
 def newGame(mode):
     global state, joueur1, joueur2, timer
 
-    if mode=='Solo':
-        joueur1=Joueur(0)
+    if mode=='SoloMarath':
+        joueur1=Joueur(0,True)
         timer=[time(),None]
-        state='Solo'
+        state='SoloMarath'
+
+    if mode=='SoloSprint':
+        joueur1=Joueur(0,False)
+        timer=[time(),None]
+        state='SoloSprint'
 
     if mode=='Versus':
-        joueur1, joueur2=Joueur(0), Joueur(1)
+        joueur1, joueur2=Joueur(0,False), Joueur(1,False)
         timer=[time(),None]
         state='Versus'
 
@@ -62,31 +67,32 @@ def main():
 
     if state=='Menu':
         if (time()-menuIdx[1])>1/6:
-            if inputs[0][8]:menuIdx[0]=(menuIdx[0]-1 if menuIdx[0]>0 else 2); menuIdx[1]=time()
-            if inputs[0][3]:menuIdx[0]=(menuIdx[0]+1 if menuIdx[0]<2 else 0); menuIdx[1]=time()
+            if inputs[0][8]:menuIdx[0]=(menuIdx[0]-1 if menuIdx[0]>0 else 3); menuIdx[1]=time()
+            if inputs[0][3]:menuIdx[0]=(menuIdx[0]+1 if menuIdx[0]<3 else 0); menuIdx[1]=time()
             if inputs[0][2]:
-                if menuIdx[0]==0:newGame('Solo')
-                elif menuIdx[0]==1:newGame('Versus')
+                if menuIdx[0]==0:newGame('SoloMarath')
+                elif menuIdx[0]==1:newGame('SoloSprint')
+                elif menuIdx[0]==2:newGame('Versus')
                 else:tk.destroy()
             if inputs[0][9]:tk.destroy()
 
-    if state=='Solo':
+    if state[:4]=='Solo':
         if joueur1.game:
-            if joueur1.score>=40:joueur1.game=False; timer[1]=time()
-            joueur1.gamePlay(inputs, gravCD, moveCD, rotCD, hdCD)
+            if joueur1.score>=40 and state[4:]=='Sprint':joueur1.game=False; timer[1]=time()
+            joueur1.gamePlay(inputs, moveCD, rotCD, hdCD, das)
         
         elif  (time()-timer[0])<4 and (time()-timer[0])>3:joueur1.game=True
 
-        if inputs[0][6]:newGame('Solo'); inputs[0][6]=False
+        if inputs[0][6]:newGame(state); inputs[0][6]=False
         if inputs[0][9]:state='Menu'; menuIdx[1]=time()
 
     if state=='Versus':
         if not joueur1.game and not joueur2.game and (time()-timer[0])>3:
             joueur1.game, joueur2.game=True, True
-            
+
         if joueur1.game and joueur2.game:
-            garbage2=joueur1.gamePlay(inputs, gravCD, moveCD, rotCD, hdCD)
-            garbage1=joueur2.gamePlay(inputs, gravCD, moveCD, rotCD, hdCD)  
+            garbage2=joueur1.gamePlay(inputs, moveCD, rotCD, hdCD, das)
+            garbage1=joueur2.gamePlay(inputs, moveCD, rotCD, hdCD, das)  
 
             joueur1.addLine(garbage1)
             joueur2.addLine(garbage2)
@@ -99,9 +105,9 @@ def main():
         imgGrid[1]=createImage(joueur2.currentBlock.renderBlock(deepcopy(joueur2.grid)), screenDim[1], color)
         fpsLimiter=time(); affichage(can, screenDim, imgBlocks, imgGrid, joueur1, joueur2, timer, state, menuIdx, animMenu)
 
-        can.config(bg='#'+str((toHex(int(time()*5)%150) if int(time()*5)%150<75 else toHex(150-int(time()*5)%150))+
+        can.config(bg='#'+(toHex(int(time()*5)%200) if int(time()*5)%200<100 else toHex(200-int(time()*5)%200))+
                             (toHex(200-int(time()*10)%200) if int(time()*10)%200<100 else toHex(int(time()*10)%200))+
-                            (toHex(150-int(time()*10)%150) if int(time()*10)%150<75 else toHex(int(time()*10)%150))))
+                            (toHex(200-int(time()*8)%200) if int(time()*8)%200<100 else toHex(int(time()*8)%200)))
 
     tk.after(1, main)
 
