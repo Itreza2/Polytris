@@ -57,9 +57,9 @@ def affichage(can, screenDim, imgBlocks, imgGrid, joueur1, joueur2, timer, state
                                 text=str(int((time()-timer[0]-3)/60))+':'+('0' if int(time()-timer[0]-3)%60<10 else '')+str(int(time()-timer[0]-3)%60), 
                                 anchor='center',fill='white', font=('Arial', int(screenDim[1]/40)))
             elif state[4:]=='Marath':
-                can.create_text(screenDim[0]/2-int(screenDim[1]/25)*6.25, screenDim[1]/2-int(screenDim[1]/25)*4.75,
+                can.create_text(screenDim[0]/2-int(screenDim[1]/25)*5.5, screenDim[1]/2-int(screenDim[1]/25)*4.75,
                                 text=str(joueur1.points)+'pts', 
-                                anchor='center',fill='white', font=('Arial', int(screenDim[1]/40)))
+                                anchor='e',fill='white', font=('Arial', int(screenDim[1]/40)))
         else:
             if int(4-(time()-timer[0]))>0:
                 can.create_text(screenDim[0]/2, screenDim[1]/2-int(screenDim[1]/25),
@@ -79,7 +79,7 @@ def affichage(can, screenDim, imgBlocks, imgGrid, joueur1, joueur2, timer, state
                 if state[4:]=='Marath':
                     can.create_text(screenDim[0]/2, screenDim[1]/2+int(screenDim[1]/25)*1.25,
                                     text=str(joueur1.points)+'pts', 
-                                    anchor='center', fill='white', font=('Arial', int(screenDim[1]/15)))              
+                                    anchor='center', fill='white', font=('Arial', int(screenDim[1]/18)))              
 
     if state=='Versus':
         can.create_image(screenDim[0]/2-int(screenDim[1]/25)*8, screenDim[1]/2, image=imgGrid[0], anchor='center')

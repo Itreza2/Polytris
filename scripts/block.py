@@ -74,13 +74,13 @@ class Block():
                             if gridR[self.Y+j+wk[0 if dir==1 else 1][self.rot][var][1]][self.X+i+wk[0 if dir==1 else 1][self.rot][var][0]]!=0:
                                 collide=True
         
-        self.rotTic=time()
+        self.rotTic=time()  
 
         if not collide:
             if self.type==6:self.tSpin=True
             self.rot=newRot
             self.X+=wk[0 if dir==1 else 1][self.rot][var][0]
-            self.Y+=wk[0 if dir==1 else 1][self.rot][var][1]
+            self.Y-=wk[0 if dir==1 else 1][self.rot][var][1]
 
     def isOut(self):
         out=False

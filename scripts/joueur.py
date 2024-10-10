@@ -19,13 +19,13 @@ class Joueur:
         self.surfing=[False, time()]
         self.score=0
         self.points=0
-        self.level=[5,0]
+        self.level=[1,0]
         self.grav=[(0.8-((self.level[0]-1)*0.007))**(self.level[0]-1), 4/100]
         self.levelOn=levelOn
         self.updateQueue()
 
     def gamePlay(self, inputs, moveCD, rotCD, hdCD, das):
-        garbage=[]
+        garbage=[]; hardDrop=False; 
 
         if self.hold[1] and inputs[self.inputIdx][5]:
             if self.hold[0]==0:
@@ -43,13 +43,13 @@ class Joueur:
             if inputs[self.inputIdx][7]:self.currentBlock.rotate(self.grid, -1); inputs[self.inputIdx][2]=False; self.surfing[0]=True
 
         if (time()-self.hdTic)>hdCD:
-            if inputs[self.inputIdx][4]:self.currentBlock.hardDrop(self.grid); self.hdTic=time(); self.surfing[0]=False
+            if inputs[self.inputIdx][4]:self.currentBlock.hardDrop(self.grid); self.hdTic=time(); hardDrop=True; self.surfing[0]=False
 
-        if (time()-self.currentBlock.gravTic)>self.grav[1 if inputs[self.inputIdx][3] else 0]:
+        if (time()-self.currentBlock.gravTic)>self.grav[1 if inputs[self.inputIdx][3] else 0] or hardDrop:
             if inputs[self.inputIdx][3]:self.surfing[0]=True
 
             if self.currentBlock.gravity(self.grid):
-                if not self.surfing[0] or (time()-self.surfing[1])>0.5 or 0==0:
+                if not self.surfing[0] or (time()-self.surfing[1])>0.5:
                     if self.currentBlock.isOut():
                         self.game=False
                     else:

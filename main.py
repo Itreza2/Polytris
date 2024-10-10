@@ -11,7 +11,7 @@ tk=Tk()
 tk.title('Polytris')
 tk.geometry('1000x600')
 tk.minsize(width=200, height=180)
-tk.attributes('-fullscreen', False)
+tk.attributes('-fullscreen', True)
 
 color=((0,0,0),(0,255,255),(51,51,255),(255,153,51),(255,255,51),(0,204,0),(153,51,255),(204,0,0),(125,125,125),(64,64,64))
 moveCD=12/100; rotCD=12/100; hdCD=30/100; das=18/100
