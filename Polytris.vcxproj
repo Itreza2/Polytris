@@ -25,6 +25,7 @@
     <ClCompile Include="src\Menu.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\AssetsManager.cpp" />
+    <ClCompile Include="src\textTools.cpp" />
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>

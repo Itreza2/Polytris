@@ -5,6 +5,7 @@ Menu::Menu()
 	bg = SDL_CreateTexture(Window::getWindow()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 960, 540);
 
 	player1 = new Player(PLAYER_1); 
+	player2 = new Player(PLAYER_2);
 }
 
 bool Menu::uptate() 
@@ -18,6 +19,10 @@ bool Menu::uptate()
 		free(player1);
 		player1 = new Player(PLAYER_1);
 	}
+	if (player2->update()) {
+		free(player2);
+		player2 = new Player(PLAYER_2);
+	}
 
 	return false;
 }
@@ -25,7 +30,9 @@ bool Menu::uptate()
 //To refactor : quick implementation for test purposes
 void Menu::render()
 {
-	SDL_Rect p1Area = { 0, 0, 10 * 16, 20 * 16 };
+	SDL_Rect p1Area = { 192, 212, 576, 656 };
+	SDL_Rect p2Area = { 1152, 212, 576, 656 };
 
 	SDL_RenderCopy(Window::getWindow()->renderer, player1->render(), NULL, &p1Area);
+	SDL_RenderCopy(Window::getWindow()->renderer, player2->render(), NULL, &p2Area);
 }

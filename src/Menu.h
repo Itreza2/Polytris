@@ -11,7 +11,7 @@ private:
 
 	SDL_Texture* bg;
 
-	Player* player1;
+	Player* player1, *player2;
 
 public:
 

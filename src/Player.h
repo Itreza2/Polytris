@@ -8,6 +8,8 @@
 #include "Keyboard.h"
 #include "AssetsManager.h"
 
+#include "textTools.cpp"
+
 const Uint32 ARR = 100;
 const Uint32 DAS = 200;
 const Uint32 HD_Lock = 250;
@@ -51,6 +53,8 @@ private:
 	void hold();
 
 	void eraseFull();
+
+	void renderGrid();
 
 public:
 
