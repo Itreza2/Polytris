@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Window.h"
 #include "Keyboard.h"
+#include "AssetsManager.h"
 
 class Menu
 {

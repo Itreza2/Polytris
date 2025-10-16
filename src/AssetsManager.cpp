@@ -30,7 +30,6 @@ void AssetsManager::loadGroup(std::string path, SDL_Renderer* renderer)
 
 		while (std::getline(stream, word, ','))
 			row.push_back(word);
-		std::cout << row[0] << std::endl;
 		if (!row[0].compare("TEXTURE")) {
 			surface = IMG_Load(row[2].c_str());
 			if (surface == NULL) {

@@ -54,7 +54,7 @@ public:
 
 	void rotate(int direction);
 
-	void lodge(unsigned int* grid_);
+	bool lodge(unsigned int* grid_);
 };
 
 std::vector<std::vector<std::vector<unsigned int>>> Block::SRS = {};

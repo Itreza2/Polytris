@@ -15,6 +15,13 @@ const Uint32 DAS = 200;
 const Uint32 HD_Lock = 250;
 const Uint32 ROT = 400;
 
+enum PlayerStatus {
+	PS_IDLE,
+	PS_GAME,
+	PS_LOSS,
+	PS_WIN,
+};
+
 class Player
 {
 private:
@@ -22,6 +29,8 @@ private:
 	//[Attributes]//
 
 	Caller_ type;
+
+	PlayerStatus status;
 
 	Uint32 gravity;
 
@@ -31,6 +40,9 @@ private:
 	Uint32 lastRotation;
 	Uint32 DASTick;
 	
+	Uint32 startTime, endTime;
+	int score;
+
 	bool DASBool;
 	bool holdAllowed;
 
@@ -56,11 +68,13 @@ private:
 
 	void renderGrid();
 
+	std::string chronoText(Uint32 timer) const;
+
 public:
 
 	//[Constructor & destructor]//
 
-	Player(Caller_ type);
+	Player(Caller_ type, PlayerStatus defaultStatus = PS_GAME);
 
 	~Player() { free(grid); }
 
