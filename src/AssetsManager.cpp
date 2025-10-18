@@ -38,11 +38,8 @@ void AssetsManager::loadGroup(std::string path, SDL_Renderer* renderer)
 			else {
 				SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
 				textures.insert({ row[1], SDL_CreateTextureFromSurface(renderer, surface) });
+				SDL_SetTextureBlendMode(textures[row[1]], (SDL_BlendMode)stoi(row[3])); // Set BlendMode
 				SDL_FreeSurface(surface);
-
-				if (row.size() == 4) {
-					SDL_SetTextureAlphaMod(textures[row[1]], stoi(row[3]));
-				}
 			}
 		}
 		else if (!row[0].compare("FONT")) {

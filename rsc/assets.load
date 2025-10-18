@@ -1,7 +1,8 @@
-TEXTURE,blocks,rsc/sprites/blocks.png
-TEXTURE,grid,rsc/sprites/grid.png
-TEXTURE,blocksPreview,rsc/sprites/blocksPreview.png
+TEXTURE,blocks,rsc/sprites/blocks.png,1
+TEXTURE,grid,rsc/sprites/grid.png,0
+TEXTURE,blocksPreview,rsc/sprites/blocksPreview.png,1
 FONT,futuraCountdown,rsc/fonts/16020_FUTURAM.ttf,160
 FONT,futuraH,rsc/fonts/16020_FUTURAM.ttf,70
 FONT,futuraB,rsc/fonts/16020_FUTURAM.ttf,48
 FONT,futuraM,rsc/fonts/16020_FUTURAM.ttf,32
+TEXTURE,smoke,rsc/sprites/smoke.png,1

@@ -56,6 +56,7 @@ void Player::eraseFull()
 			}
 			for (int i = 0; i < 10; i++)
 				grid[i] = 0;
+			lineBreakAnims.push_back({j, SDL_GetTicks()});
 			score++;
 		}
 	}
@@ -82,10 +83,33 @@ void Player::renderGrid()
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 20; j++) {
 			blockType = static_cast<int>(gridCopy[j * 10 + i]);
-			src = { blockType * 16, 0, 16, 16 };
+			src = { blockType * 64, 0, 64, 64 };
 			dst = { 112 + i * 32, 8 + j * 32, 32, 32 }; //112 ; 8 is the top-left corner of the board on the grid sprite
 			SDL_RenderCopy(Window::getWindow()->renderer, blocks, &src, &dst);
 		}
+	}
+}
+
+void Player::renderLineBreaks()
+{
+	SDL_Rect src, dst;
+	LineBreak lineBreak;
+	std::vector<int> endedAnims;
+
+	for (int index = 0; index < lineBreakAnims.size(); index++) {
+		lineBreak = lineBreakAnims[index];
+
+		src = { 64 * (int)((SDL_GetTicks() - lineBreak.spawnTime) / 50 % 12), 0, 64, 64 };
+		for (int i = 0; i < 10; i++) {
+			dst = { 110 + 32 * i, 6 + lineBreak.y * 32, 36, 36 };
+			SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("smoke"), &src, &dst);
+		}
+		if ((SDL_GetTicks() - lineBreak.spawnTime) / 50 % 12 > 10) {
+			endedAnims.push_back(index);
+		}
+	}
+	for (int index = endedAnims.size() - 1; index >= 0; index--) {
+		lineBreakAnims.erase(lineBreakAnims.begin() + endedAnims[index]);
 	}
 }
 
@@ -112,6 +136,7 @@ Player::Player(Caller_ type, PlayerStatus defaultStatus)
 
 	UI = SDL_CreateTexture(Window::getWindow()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 576, 656);
 	SDL_SetTextureBlendMode(UI, SDL_BLENDMODE_BLEND);
+	lineBreakAnims = {};
 
 	grid = (unsigned int*)malloc(sizeof(unsigned int) * 200);
 	typeQuantity = (unsigned int*)malloc(sizeof(unsigned int) * 7);
@@ -216,7 +241,6 @@ SDL_Texture* Player::render()
 	SDL_SetRenderTarget(Window::getWindow()->renderer, UI);
 
 	//Overwrite previous state with the blank board texture, could be made in a cleaner way
-	SDL_SetTextureBlendMode(AssetsManager::getLib()->getTexture("grid"), SDL_BLENDMODE_NONE); // !!!
 	SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("grid"), NULL, NULL);
 	
 	if (held < 7) { //Held piece preview
@@ -225,8 +249,8 @@ SDL_Texture* Player::render()
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blocksPreview"), &src, &dst);
 	} 
 	if (score) { //Score bar filling
-		src = { 64, 0, 16, 16 };
-		dst = { 440, 8 + 16 * (40 - score), 24, 16 * score};
+		src = { 260, 3, 1, 1 };
+		dst = { 440, 8 + 16 * std::max(0, 40 - score), 24, 16 * std::min(40, score)};
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blocks"), &src, &dst);
 	}
 	if (status != PS_IDLE) {
@@ -236,6 +260,7 @@ SDL_Texture* Player::render()
 			SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blocksPreview"), &src, &dst);
 		}
 		renderGrid();
+		renderLineBreaks();
 	}
 
 	switch (status)

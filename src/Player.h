@@ -2,6 +2,7 @@
 #include <exception>
 #include <SDL.h>
 #include <vector>
+#include <algorithm>
 
 #include "Block.h"
 #include "Window.h"
@@ -21,6 +22,12 @@ enum PlayerStatus {
 	PS_LOSS,
 	PS_WIN,
 };
+
+/**
+* @brief Struct used to keep track of the line break animations
+* /!\ To refactor soon /!\
+*/
+struct LineBreak { int y; Uint32 spawnTime; };
 
 class Player
 {
@@ -58,6 +65,8 @@ private:
 
 	SDL_Texture* UI;
 
+	std::vector<LineBreak> lineBreakAnims;
+
 	//[Private Methods]//
 
 	void newBlock();
@@ -67,6 +76,8 @@ private:
 	void eraseFull();
 
 	void renderGrid();
+
+	void renderLineBreaks();
 
 	std::string chronoText(Uint32 timer) const;
 
