@@ -6,3 +6,7 @@ FONT,futuraH,rsc/fonts/16020_FUTURAM.ttf,70
 FONT,futuraB,rsc/fonts/16020_FUTURAM.ttf,48
 FONT,futuraM,rsc/fonts/16020_FUTURAM.ttf,32
 TEXTURE,smoke,rsc/sprites/smoke.png,1
+TEXTURE,background,rsc/sprites/background.png,0
+TEXTURE,blueBand,rsc/sprites/blueBand.png,1
+TEXTURE,redBand,rsc/sprites/redBand.png,1
+TEXTURE,alpha50,rsc/sprites/alpha50.png,1
