@@ -10,9 +10,13 @@ class Menu
 {
 private:
 
-	SDL_Texture* bg;
+	GameMode currentMode;
 
 	Player* player1, *player2;
+
+	//[ Private methods ]//
+
+	void renderBg();
 
 public:
 

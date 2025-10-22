@@ -60,7 +60,11 @@ void Player::eraseFull()
 			score++;
 		}
 	}
-	if (score >= 40) {
+	if (score >= 5 * level && mode == GM_MARATHON) {
+		score = 0;
+		increaseLevel();
+	}
+	if (score >= 40 && mode == GM_SPRINT40L) {
 		endTime = SDL_GetTicks();
 		status = PS_WIN;
 	}
@@ -119,13 +123,22 @@ std::string Player::chronoText(Uint32 timer) const
 		+ std::to_string(timer / 1000 % 60) + "''");
 }
 
-Player::Player(Caller_ type, PlayerStatus defaultStatus)
+void Player::increaseLevel()
+{
+	level++;
+	gravity = (Uint32)(1000 * std::pow(0.8 - ((level - 1) * 0.007), level - 1));
+}
+
+Player::Player(Caller_ type, GameMode mode, PlayerStatus defaultStatus)
 {
 	this->type = type;
+	this->mode = mode;
 	status = defaultStatus;
 	score = 0;
 
-	gravity = 400;
+	level = 0;
+	increaseLevel();
+
 	lastDrop = 0;
 	lastHDrop = 0;
 	lastMove = 0;
@@ -249,8 +262,19 @@ SDL_Texture* Player::render()
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blocksPreview"), &src, &dst);
 	} 
 	if (score) { //Score bar filling
+		int max;
+		switch (mode) {
+		case GM_MARATHON:
+			max = 5 * level; 
+			break;
+		case GM_VERSUS:
+			max = 20; break;
+		case GM_SPRINT40L:
+			max = 40; break;
+		}
 		src = { 260, 3, 1, 1 };
-		dst = { 440, 8 + 16 * std::max(0, 40 - score), 24, 16 * std::min(40, score)};
+		dst = { 440, 8 + (int)(640 / max) * std::max(0, max - score), 24, (int)(640 / max) * std::min(max, score) };
+
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blocks"), &src, &dst);
 	}
 	if (status != PS_IDLE) {
@@ -276,15 +300,36 @@ SDL_Texture* Player::render()
 				AssetsManager::getLib()->getFont("futuraCountdown"), A_CENTER);
 		}
 		else {
-			createText(Window::getWindow()->renderer, 47, 150, chronoText(SDL_GetTicks() - startTime - 3000).c_str(),
-				AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
-			createText(Window::getWindow()->renderer, 47, 186, (std::to_string(score) + "/40").c_str(),
-				AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+			switch (mode)
+			{
+			case GM_MARATHON:
+				createText(Window::getWindow()->renderer, 47, 150, ("lv " + std::to_string(level)).c_str(),
+					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+				createText(Window::getWindow()->renderer, 47, 186, "score",
+					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+				break;
+			case GM_VERSUS:
+				break;
+			case GM_SPRINT40L:
+				createText(Window::getWindow()->renderer, 47, 150, chronoText(SDL_GetTicks() - startTime - 3000).c_str(),
+					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+				createText(Window::getWindow()->renderer, 47, 186, (std::to_string(score) + "/40").c_str(),
+					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+				break;
+			}
 		}
 		break;
 	case PS_LOSS:
-		createText(Window::getWindow()->renderer, 272, 328, "Perdu :(",
-			AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+		if (mode == GM_MARATHON) {
+			createText(Window::getWindow()->renderer, 272, 258, "-score-",
+				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+			createText(Window::getWindow()->renderer, 272, 328, "Bravo !",
+				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+		}
+		else {
+			createText(Window::getWindow()->renderer, 272, 328, "Perdu :(",
+				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+		}
 		break;
 	case PS_WIN:
 		createText(Window::getWindow()->renderer, 272, 258, chronoText(endTime - startTime - 3000).c_str(),

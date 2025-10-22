@@ -62,14 +62,16 @@ bool Block::correctPlacement(int x_, int y_, unsigned int rotation_)
 
 	for (int i = 0; i < shapeSize; i++) {
 		for (int j = 0; j < shapeSize; j++) {
-			if (SRS[SRSIndex][j][i] && (y_ + j) >= 0) {
+			if (SRS[SRSIndex][j][i]) {
 
 				//block out of bound
 				if ((y_ + j) > 19 || (x_ + i) < 0 || (x_ + i) > 9)
 					return false;
 				//block overlaping on other block
-				if (grid[(y_ + j) * 10 + x_ + i] && !(grid[(y_ + j) * 10 + x_ + i] == 9))
-					return false;
+				if ((y_ + j) >= 0) {
+					if (grid[(y_ + j) * 10 + x_ + i] && !(grid[(y_ + j) * 10 + x_ + i] == 9))
+						return false;
+				}
 			}
 		}
 	}
@@ -165,7 +167,7 @@ bool Block::lodge(unsigned int* grid_)
 			//Block's shadow
 			if (SRS[SRSIndex][j][i]) {
 				if (shadow->y + j >= 0 && shadow->y + j <= 19 && shadow->x + i >= 0 && shadow->x + i <= 9) {
-					grid_[(shadow->y + j) * 10 + shadow->x + i] = 9;
+					grid_[(shadow->y + j) * 10 + shadow->x + i] = type + 9;
 				}
 			}
 			//Block itself

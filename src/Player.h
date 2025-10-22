@@ -23,6 +23,12 @@ enum PlayerStatus {
 	PS_WIN,
 };
 
+enum GameMode {
+	GM_MARATHON = 0,
+	GM_VERSUS = 1,
+	GM_SPRINT40L = 2,
+};
+
 /**
 * @brief Struct used to keep track of the line break animations
 * /!\ To refactor soon /!\
@@ -36,9 +42,11 @@ private:
 	//[Attributes]//
 
 	Caller_ type;
+	GameMode mode;
 
 	PlayerStatus status;
 
+	unsigned int level;
 	Uint32 gravity;
 
 	Uint32 lastDrop;
@@ -79,13 +87,17 @@ private:
 
 	void renderLineBreaks();
 
+	//[Tool functions]//
+
 	std::string chronoText(Uint32 timer) const;
+
+	void increaseLevel();
 
 public:
 
 	//[Constructor & destructor]//
 
-	Player(Caller_ type, PlayerStatus defaultStatus = PS_GAME);
+	Player(Caller_ type, GameMode mode, PlayerStatus defaultStatus = PS_GAME);
 
 	~Player() { free(grid); }
 
