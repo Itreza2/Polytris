@@ -56,10 +56,12 @@ private:
 	Uint32 DASTick;
 	
 	Uint32 startTime, endTime;
-	int score;
+	int score, points;
 
 	bool DASBool;
 	bool holdAllowed;
+	bool backToBack;
+	bool tSpin;
 
 	unsigned int* grid; //10*20 array
 

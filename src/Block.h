@@ -52,7 +52,7 @@ public:
 
 	bool move(int direction);
 
-	void rotate(int direction);
+	bool rotate(int direction);
 
 	bool lodge(unsigned int* grid_);
 };

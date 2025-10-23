@@ -42,6 +42,7 @@ void Player::hold()
 void Player::eraseFull()
 {
 	bool full;
+	int lineCount = 0;
 
 	for (int j = 0; j < 20; j++) {
 		full = true;
@@ -57,9 +58,28 @@ void Player::eraseFull()
 			for (int i = 0; i < 10; i++)
 				grid[i] = 0;
 			lineBreakAnims.push_back({j, SDL_GetTicks()});
-			score++;
+			lineCount++;
 		}
 	}
+	if (lineCount) { //Score increase (~ standard score system minus no-line TSpins)
+		float mul = 1;
+		if (backToBack) mul = 1.5;
+		if (tSpin) {
+			points += 400 * level * (lineCount + 1) * mul;
+			backToBack = true;
+		}
+		else {
+			if (lineCount == 4) {
+				points += 800 * level * mul;
+				backToBack = true;
+			}
+			else {
+				points += (100 + 200 * (lineCount - 1)) * level;
+				backToBack = false;
+			}
+		}
+	}
+	score += lineCount;
 	if (score >= 5 * level && mode == GM_MARATHON) {
 		score = 0;
 		increaseLevel();
@@ -126,7 +146,8 @@ std::string Player::chronoText(Uint32 timer) const
 void Player::increaseLevel()
 {
 	level++;
-	gravity = (Uint32)(1000 * std::pow(0.8 - ((level - 1) * 0.007), level - 1));
+	//Standard gravity formula, except we skip the first two levels to avoid boredom
+	gravity = (Uint32)(1000 * std::pow(0.8 - ((level + 1) * 0.007), level + 1));
 }
 
 Player::Player(Caller_ type, GameMode mode, PlayerStatus defaultStatus)
@@ -134,7 +155,7 @@ Player::Player(Caller_ type, GameMode mode, PlayerStatus defaultStatus)
 	this->type = type;
 	this->mode = mode;
 	status = defaultStatus;
-	score = 0;
+	score = 0; points = 0;
 
 	level = 0;
 	increaseLevel();
@@ -144,8 +165,8 @@ Player::Player(Caller_ type, GameMode mode, PlayerStatus defaultStatus)
 	lastMove = 0;
 	lastRotation = 0;
 	DASTick = 0;
-	DASBool = false;
-	holdAllowed = true;
+	DASBool = false; holdAllowed = true;
+	backToBack = false; tSpin = false;
 
 	UI = SDL_CreateTexture(Window::getWindow()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 576, 656);
 	SDL_SetTextureBlendMode(UI, SDL_BLENDMODE_BLEND);
@@ -186,7 +207,8 @@ bool Player::update()
 					if (currentBlock->lodge(grid))
 						status = PS_LOSS;
 					newBlock();
-				}
+				} else 
+					tSpin = false;
 				lastDrop = currentTick;
 			}
 		}
@@ -214,6 +236,8 @@ bool Player::update()
 				currentBlock->hardDrop();
 				if (currentBlock->lodge(grid))
 					status = PS_LOSS;
+				else 
+					tSpin = false;
 				newBlock();
 				lastHDrop = currentTick;
 			}
@@ -222,20 +246,24 @@ bool Player::update()
 					if (currentBlock->lodge(grid))
 						status = PS_LOSS;
 					newBlock();
-				}
+				} else
+					tSpin = false;
 				lastDrop = currentTick;
 			}
 		}
 		if (keyboard->keyDown(KEY_ROTCW, type) && (currentTick - lastRotation) > ROT) {
-			currentBlock->rotate(1);
+			if (currentBlock->rotate(1))
+				tSpin = true;
 			lastRotation = currentTick;
 		}
 		if (keyboard->keyDown(KEY_ROTCCW, type) && (currentTick - lastRotation) > ROT) {
-			currentBlock->rotate(-1);
+			if (currentBlock->rotate(-1))
+				tSpin = true;
 			lastRotation = currentTick;
 		}
 		if (keyboard->keyDown(KEY_FLIP, type) && (currentTick - lastRotation) > ROT) {
-			currentBlock->rotate(2);
+			if (currentBlock->rotate(2))
+				tSpin = true;
 			lastRotation = currentTick;
 		}
 		if (keyboard->keyDown(KEY_HOLD, type) && holdAllowed)
@@ -305,8 +333,8 @@ SDL_Texture* Player::render()
 			case GM_MARATHON:
 				createText(Window::getWindow()->renderer, 47, 150, ("lv " + std::to_string(level)).c_str(),
 					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
-				createText(Window::getWindow()->renderer, 47, 186, "score",
-					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+				createText(Window::getWindow()->renderer, 47, 186, (std::to_string(points) + "pt").c_str(),
+					AssetsManager::getLib()->getFont("futuraS"), A_CENTER);
 				break;
 			case GM_VERSUS:
 				break;
@@ -321,8 +349,8 @@ SDL_Texture* Player::render()
 		break;
 	case PS_LOSS:
 		if (mode == GM_MARATHON) {
-			createText(Window::getWindow()->renderer, 272, 258, "-score-",
-				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+			createText(Window::getWindow()->renderer, 272, 258, (std::to_string(points) + "pt").c_str(),
+				AssetsManager::getLib()->getFont("futuraB"), A_CENTER);
 			createText(Window::getWindow()->renderer, 272, 328, "Bravo !",
 				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
 		}

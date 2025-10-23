@@ -118,7 +118,7 @@ bool Block::move(int direction)
 		return false;
 }
 
-void Block::rotate(int direction)
+bool Block::rotate(int direction)
 {
 	if (direction != 2 || (type != 0 && type != 4 && type != 6)) {
 		int newDirection;
@@ -147,9 +147,12 @@ void Block::rotate(int direction)
 				rotation = newDirection;
 				x += wallKicks[(8 * type + t + rotation) * 10 + failures * 2];
 				y += wallKicks[(8 * type + t + rotation) * 10 + failures * 2 + 1];
+				if (type == 5)
+					return true;
 			}
 		}
 	}
+	return false;
 }
 
 bool Block::lodge(unsigned int* grid_)
