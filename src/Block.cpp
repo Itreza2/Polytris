@@ -184,3 +184,23 @@ bool Block::lodge(unsigned int* grid_)
 	}
 	return out;
 }
+
+std::vector<int> Block::getHeights()
+{
+	std::vector<int> returnVector;
+	returnVector.assign(10, 20);
+
+	unsigned int SRSIndex = type * 4 + rotation;
+	int shapeSize = static_cast<int>(SRS[SRSIndex].size());
+
+	for (int i = 0; i < shapeSize; i++) {
+		for (int j = 0; j < shapeSize; j++) {
+
+			if (SRS[SRSIndex][j][i]) {
+				if (x + i >= 0 && x + i <= 9)
+					returnVector[x + i] = y + j;
+			}
+		}
+	}
+	return returnVector;
+}

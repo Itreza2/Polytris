@@ -95,6 +95,7 @@ void Player::renderGrid()
 	SDL_Texture* blocks = AssetsManager::getLib()->getTexture("blocks");
 	SDL_Rect src, dst;
 	int blockType;
+	bool blockAbove;
 
 	//Creation of the rendered grid
 	unsigned int* gridCopy = (unsigned int*)malloc(sizeof(unsigned int) * 200);
@@ -105,13 +106,23 @@ void Player::renderGrid()
 	currentBlock->lodge(gridCopy);
 
 	for (int i = 0; i < 10; i++) {
+		blockAbove = false;
 		for (int j = 0; j < 20; j++) {
 			blockType = static_cast<int>(gridCopy[j * 10 + i]);
-			src = { blockType * 64, 0, 64, 64 };
+			if (j >= hardDropAnims[i] && !blockType && !blockAbove)
+				src = { (hardDropBlockType + 1) * 64 + 4, 5, 1, 1 };
+			else {
+				if (blockType)
+					blockAbove = true;
+				src = { blockType * 64, 0, 64, 64 };
+			}
 			dst = { 112 + i * 32, 8 + j * 32, 32, 32 }; //112 ; 8 is the top-left corner of the board on the grid sprite
 			SDL_RenderCopy(Window::getWindow()->renderer, blocks, &src, &dst);
 		}
 	}
+	if (!hardDropAnimLenght)
+		hardDropAnims.assign(10, 20);
+	hardDropAnimLenght--;
 }
 
 void Player::renderLineBreaks()
@@ -170,7 +181,8 @@ Player::Player(Caller_ type, GameMode mode, PlayerStatus defaultStatus)
 
 	UI = SDL_CreateTexture(Window::getWindow()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 576, 656);
 	SDL_SetTextureBlendMode(UI, SDL_BLENDMODE_BLEND);
-	lineBreakAnims = {};
+	lineBreakAnims = {}; hardDropAnims.assign(10, 20);
+	hardDropAnimLenght = 0; hardDropBlockType = 0;
 
 	grid = (unsigned int*)malloc(sizeof(unsigned int) * 200);
 	typeQuantity = (unsigned int*)malloc(sizeof(unsigned int) * 7);
@@ -233,6 +245,9 @@ bool Player::update()
 				}
 			}
 			if (keyboard->keyDown(KEY_HDROP, type) && (currentTick - lastHDrop) > HD_Lock) {
+				hardDropAnims = currentBlock->getHeights();
+				hardDropAnimLenght = 3; //Lenght in frames of the hard drop visual effect
+				hardDropBlockType = currentBlock->getType();
 				currentBlock->hardDrop();
 				if (currentBlock->lodge(grid))
 					status = PS_LOSS;

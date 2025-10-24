@@ -28,7 +28,7 @@ void Menu::renderBg()
 
 Menu::Menu() 
 { 
-	currentMode = GM_MARATHON;
+	currentMode = GM_SPRINT40L;
 
 	player1 = new Player(PLAYER_1, currentMode, PS_IDLE); 
 	player2 = new Player(PLAYER_2, currentMode, PS_IDLE);
