@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Window.h"
 #include "Keyboard.h"
+#include "AttackBuffer.h"
 #include "AssetsManager.h"
 
 class Menu
@@ -18,6 +19,8 @@ private:
 
 	Player* player1, *player2;
 
+	AttackBuffer* attackBuffer;
+
 	std::string message;
 
 	//[ Private methods ]//
@@ -25,6 +28,8 @@ private:
 	void renderBg();
 
 	void renderMsg();
+
+	void newAttackBuffer();
 
 public:
 

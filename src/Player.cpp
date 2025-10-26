@@ -161,10 +161,11 @@ void Player::increaseLevel()
 	gravity = (Uint32)(1000 * std::pow(0.8 - ((level + 1) * 0.007), level + 1));
 }
 
-Player::Player(Caller_ type, GameMode mode, PlayerStatus defaultStatus)
+Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus defaultStatus)
 {
 	this->type = type;
 	this->mode = mode;
+	attackBuffer = buffer;
 	status = defaultStatus;
 	score = 0; points = 0;
 
@@ -284,8 +285,25 @@ bool Player::update()
 		if (keyboard->keyDown(KEY_HOLD, type) && holdAllowed)
 			hold();
 	}
-	if ((SDL_GetTicks() - startTime > 3000 || status != PS_GAME) && keyboard->keyDown(KEY_RESET, type))
-		return true;
+	if ((SDL_GetTicks() - startTime > 3000 || status != PS_GAME) && keyboard->keyDown(KEY_RESET, type)) {
+		if (mode == GM_VERSUS && status == PS_IDLE)
+			status = PS_READY;
+		else if (status != PS_READY) {
+			if (mode == GM_VERSUS)
+				attackBuffer->declareLoss();
+			return true;
+		}
+	}
+	if (mode == GM_VERSUS) {
+		if (status == PS_LOSS)
+			attackBuffer->declareLoss();
+		else if (attackBuffer->isOver())
+			status = PS_WIN;
+		if (status == PS_READY) {
+			if (attackBuffer->ready(type))
+				return true;
+		}
+	}
 	return false;
 }
 
@@ -320,7 +338,7 @@ SDL_Texture* Player::render()
 
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blocks"), &src, &dst);
 	}
-	if (status != PS_IDLE) {
+	if (status != PS_IDLE && status != PS_READY) {
 		for (int i = 0; i < 5; i++) { //Bag preview
 			src = { 50 * (int)queue[i], 0, 50, 50 };
 			dst = { 472, 8 + i * 94, 94, 94 };
@@ -346,7 +364,7 @@ SDL_Texture* Player::render()
 			switch (mode)
 			{
 			case GM_MARATHON:
-				createText(Window::getWindow()->renderer, 47, 150, ("lv " + std::to_string(level)).c_str(),
+				createText(Window::getWindow()->renderer, 47, 150, ("niv " + std::to_string(level)).c_str(),
 					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
 				createText(Window::getWindow()->renderer, 47, 186, (std::to_string(points) + "pt").c_str(),
 					AssetsManager::getLib()->getFont("futuraS"), A_CENTER);
@@ -375,10 +393,15 @@ SDL_Texture* Player::render()
 		}
 		break;
 	case PS_WIN:
-		createText(Window::getWindow()->renderer, 272, 258, chronoText(endTime - startTime - 3000).c_str(),
-			AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+		if (mode == GM_SPRINT40L)
+			createText(Window::getWindow()->renderer, 272, 258, chronoText(endTime - startTime - 3000).c_str(),
+				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
 		createText(Window::getWindow()->renderer, 272, 328, "Bravo !",
 			AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+		break;
+	case PS_READY:
+		createText(Window::getWindow()->renderer, 272, 328, "Pret",
+			AssetsManager::getLib()->getFont("futuraCountdown"), A_CENTER);
 		break;
 	}
 	SDL_SetRenderTarget(Window::getWindow()->renderer, NULL);

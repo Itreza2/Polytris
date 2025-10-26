@@ -8,6 +8,7 @@
 #include "Window.h"
 #include "Keyboard.h"
 #include "AssetsManager.h"
+#include "AttackBuffer.h"
 
 #include "textTools.cpp"
 
@@ -21,6 +22,7 @@ enum PlayerStatus {
 	PS_GAME,
 	PS_LOSS,
 	PS_WIN,
+	PS_READY,
 };
 
 enum GameMode {
@@ -35,6 +37,7 @@ enum GameMode {
 */
 struct LineBreak { int y; Uint32 spawnTime; };
 
+// /!\ TODO : This class is a mess and should be split /!\ //
 class Player
 {
 private:
@@ -43,6 +46,7 @@ private:
 
 	Caller_ type;
 	GameMode mode;
+	AttackBuffer* attackBuffer;
 
 	PlayerStatus status;
 
@@ -101,7 +105,7 @@ public:
 
 	//[Constructor & destructor]//
 
-	Player(Caller_ type, GameMode mode, PlayerStatus defaultStatus = PS_GAME);
+	Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus defaultStatus = PS_GAME);
 
 	~Player() { free(grid); }
 

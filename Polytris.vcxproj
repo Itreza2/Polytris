@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\AttackBuffer.cpp" />
     <ClCompile Include="src\Block.cpp" />
     <ClCompile Include="src\Keyboard.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AttackBuffer.h" />
     <ClInclude Include="src\Block.h" />
     <ClInclude Include="src\Keyboard.h" />
     <ClInclude Include="src\Menu.h" />

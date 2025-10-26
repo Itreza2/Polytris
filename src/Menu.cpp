@@ -45,6 +45,17 @@ void Menu::renderMsg()
 		msgStart = SDL_GetTicks();
 }
 
+void Menu::newAttackBuffer()
+{
+	delete attackBuffer;
+	delete player1;
+	delete player2;
+
+	attackBuffer = new AttackBuffer();
+	player1 = new Player(PLAYER_1, currentMode, attackBuffer, PS_IDLE);
+	player2 = new Player(PLAYER_2, currentMode, attackBuffer, PS_IDLE);
+}
+
 Menu::Menu() 
 { 
 	inGame = false;
@@ -53,6 +64,7 @@ Menu::Menu()
 
 	player1 = nullptr; 
 	player2 = nullptr;
+	attackBuffer = new AttackBuffer();
 
 	std::ifstream file;
 	file.open("rsc\\mainMenuMessage.txt");
@@ -66,15 +78,25 @@ bool Menu::uptate()
 	if (inGame) {
 		if (keyboard->keyDown(KEY_EXIT)) {
 			inGame = false; //Back to main menu
+			delete player1;
+			delete player2;
 			lastModeChange = SDL_GetTicks();
 		}
 		if (player1->update()) {
-			free(player1);
-			player1 = new Player(PLAYER_1, currentMode);
+			if (attackBuffer->isOver())
+				newAttackBuffer();
+			else {
+				delete player1;
+				player1 = new Player(PLAYER_1, currentMode, attackBuffer);
+			}
 		}
 		if (player2->update()) {
-			free(player2);
-			player2 = new Player(PLAYER_2, currentMode);
+			if (attackBuffer->isOver())
+				newAttackBuffer();
+			else {
+				delete player2;
+				player2 = new Player(PLAYER_2, currentMode, attackBuffer);
+			}
 		}
 	}
 	else { //Main menu
@@ -93,8 +115,8 @@ bool Menu::uptate()
 		}
 		if (keyboard->keyDown(KEY_ANY)) {
 			inGame = true;
-			player1 = new Player(PLAYER_1, currentMode, PS_IDLE);
-			player2 = new Player(PLAYER_2, currentMode, PS_IDLE);
+			player1 = new Player(PLAYER_1, currentMode, attackBuffer, PS_IDLE);
+			player2 = new Player(PLAYER_2, currentMode, attackBuffer, PS_IDLE);
 		}
 	}
 	return false;
