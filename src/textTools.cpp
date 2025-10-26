@@ -24,7 +24,7 @@ enum Anchor
 * @param font the ttf font that will be used to render the text
 * @param anchor the type of anchoring used to position the text
 */
-void createText(SDL_Renderer* renderer, int x, int y, const char* content, TTF_Font* font, Anchor anchor = A_CENTER)
+int createText(SDL_Renderer* renderer, int x, int y, const char* content, TTF_Font* font, Anchor anchor = A_CENTER)
 {
 	SDL_Rect dst;
 	SDL_Color white = { 0xff, 0xff, 0xff, 0xff };
@@ -63,6 +63,10 @@ void createText(SDL_Renderer* renderer, int x, int y, const char* content, TTF_F
 	}
 	SDL_RenderCopy(renderer, texture, NULL, &dst);
 
+	int lenght = surface->w;
+
 	SDL_FreeSurface(surface);
 	SDL_DestroyTexture(texture);
+
+	return lenght;
 }

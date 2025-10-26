@@ -10,13 +10,21 @@ class Menu
 {
 private:
 
+	bool inGame;
+
 	GameMode currentMode;
 
+	Uint32 lastModeChange, msgStart;
+
 	Player* player1, *player2;
+
+	std::string message;
 
 	//[ Private methods ]//
 
 	void renderBg();
+
+	void renderMsg();
 
 public:
 

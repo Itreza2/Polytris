@@ -25,8 +25,8 @@ enum PlayerStatus {
 
 enum GameMode {
 	GM_MARATHON = 0,
-	GM_VERSUS = 1,
-	GM_SPRINT40L = 2,
+	GM_SPRINT40L = 1,
+	GM_VERSUS = 2,
 };
 
 /**

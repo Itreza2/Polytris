@@ -69,8 +69,8 @@ bool Keyboard::keyDown(Key_ keyName, Caller_ caller)
 				return isPressed[0];
 				break;
 			case (KEY_ANY):
-				for (unsigned int i = 1; i <= 10; i++) {
-					if (isPressed[keyName] || isPressed[keyName + 10])
+				for (unsigned int i = 5; i <= 10; i++) {
+					if (isPressed[i] || isPressed[i + 10])
 						return true;
 				} return false;
 				break;

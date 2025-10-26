@@ -23,33 +23,80 @@ void Menu::renderBg()
 		dst = { -768, i + tick, 1920, 1600 };
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blueBand"), NULL, &dst);
 	}
-	SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alpha50"), NULL, NULL);
+	if (inGame)
+		dst = { 0, 0, 1920, 1080 };
+	else {
+		dst = { 84, 0, 720, 1080 };
+		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alpha25"), NULL, NULL);
+	}
+	SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alpha50"), NULL, &dst);
+}
+
+void Menu::renderMsg()
+{
+	int pos = (SDL_GetTicks() - msgStart) / 20;
+
+	int lenght = createText(Window::getWindow()->renderer, -pos, 1012, message.c_str(),
+		AssetsManager::getLib()->getFont("futuraM"), A_W);
+	createText(Window::getWindow()->renderer, lenght - pos, 1012, message.c_str(),
+		AssetsManager::getLib()->getFont("futuraM"), A_W);
+
+	if (pos >= lenght)
+		msgStart = SDL_GetTicks();
 }
 
 Menu::Menu() 
 { 
-	currentMode = GM_SPRINT40L;
+	inGame = false;
+	currentMode = GM_MARATHON;
+	lastModeChange = 0; msgStart = SDL_GetTicks();
 
-	player1 = new Player(PLAYER_1, currentMode, PS_IDLE); 
-	player2 = new Player(PLAYER_2, currentMode, PS_IDLE);
+	player1 = nullptr; 
+	player2 = nullptr;
+
+	std::ifstream file;
+	file.open("rsc\\mainMenuMessage.txt");
+	std::getline(file, message);
 }
 
 bool Menu::uptate() 
 {
 	Keyboard* keyboard = Keyboard::getKeyboard();
 
-	if (keyboard->keyDown(KEY_EXIT)) {
-		return true;
+	if (inGame) {
+		if (keyboard->keyDown(KEY_EXIT)) {
+			inGame = false; //Back to main menu
+			lastModeChange = SDL_GetTicks();
+		}
+		if (player1->update()) {
+			free(player1);
+			player1 = new Player(PLAYER_1, currentMode);
+		}
+		if (player2->update()) {
+			free(player2);
+			player2 = new Player(PLAYER_2, currentMode);
+		}
 	}
-	if (player1->update()) {
-		free(player1);
-		player1 = new Player(PLAYER_1, currentMode);
+	else { //Main menu
+		if (keyboard->keyDown(KEY_EXIT) && SDL_GetTicks() - lastModeChange > 300) {
+			return true; //Exit the application
+		}
+		if (keyboard->keyDown(KEY_UP) && !keyboard->keyDown(KEY_DOWN) && SDL_GetTicks() - lastModeChange > 200) {
+			if (currentMode)
+				currentMode = static_cast<GameMode>(static_cast<std::underlying_type<GameMode>::type>(currentMode) - 1);
+			lastModeChange = SDL_GetTicks();
+		}
+		if (keyboard->keyDown(KEY_DOWN) && !keyboard->keyDown(KEY_UP) && SDL_GetTicks() - lastModeChange > 200) {
+			if (currentMode != 2)
+				currentMode = static_cast<GameMode>(static_cast<std::underlying_type<GameMode>::type>(currentMode) + 1);
+			lastModeChange = SDL_GetTicks();
+		}
+		if (keyboard->keyDown(KEY_ANY)) {
+			inGame = true;
+			player1 = new Player(PLAYER_1, currentMode, PS_IDLE);
+			player2 = new Player(PLAYER_2, currentMode, PS_IDLE);
+		}
 	}
-	if (player2->update()) {
-		free(player2);
-		player2 = new Player(PLAYER_2, currentMode);
-	}
-
 	return false;
 }
 
@@ -58,9 +105,52 @@ void Menu::render()
 {
 	SDL_Rect p1Area = { 192, 212, 576, 656 };
 	SDL_Rect p2Area = { 1152, 212, 576, 656 };
+	SDL_Rect dst;
 
 	renderBg();
 
-	SDL_RenderCopy(Window::getWindow()->renderer, player1->render(), NULL, &p1Area);
-	SDL_RenderCopy(Window::getWindow()->renderer, player2->render(), NULL, &p2Area);
+	if (inGame) {
+		SDL_RenderCopy(Window::getWindow()->renderer, player1->render(), NULL, &p1Area);
+		SDL_RenderCopy(Window::getWindow()->renderer, player2->render(), NULL, &p2Area);
+	}
+	else {
+		dst = { 110, 60, 250, 250 };
+		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("logo"), NULL, &dst);
+		createText(Window::getWindow()->renderer, 310, 285, "olytris",
+			AssetsManager::getLib()->getFont("futuraCountdown"), A_SW);
+		createText(Window::getWindow()->renderer, 620, 285, "v1.0",
+			AssetsManager::getLib()->getFont("futuraS"), A_SW);
+
+		dst = { 0, 980, 1920, 64 };
+		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alphaRed"), NULL, &dst);
+		renderMsg();
+
+		switch (currentMode)
+		{
+		case GM_MARATHON:
+			createText(Window::getWindow()->renderer, 200, 470, "Marathon",
+				AssetsManager::getLib()->getFont("futuraH"), A_W);
+			createText(Window::getWindow()->renderer, 200, 590, "Sprint (40L)",
+				AssetsManager::getLib()->getFont("futuraB"), A_W);
+			createText(Window::getWindow()->renderer, 200, 710, "Versus 1c1",
+				AssetsManager::getLib()->getFont("futuraB"), A_W);
+			break;
+		case GM_SPRINT40L:
+			createText(Window::getWindow()->renderer, 200, 470, "Marathon",
+				AssetsManager::getLib()->getFont("futuraB"), A_W);
+			createText(Window::getWindow()->renderer, 200, 590, "Sprint (40L)",
+				AssetsManager::getLib()->getFont("futuraH"), A_W);
+			createText(Window::getWindow()->renderer, 200, 710, "Versus 1c1",
+				AssetsManager::getLib()->getFont("futuraB"), A_W);
+			break;
+		case GM_VERSUS:
+			createText(Window::getWindow()->renderer, 200, 470, "Marathon",
+				AssetsManager::getLib()->getFont("futuraB"), A_W);
+			createText(Window::getWindow()->renderer, 200, 590, "Sprint (40L)",
+				AssetsManager::getLib()->getFont("futuraB"), A_W);
+			createText(Window::getWindow()->renderer, 200, 710, "Versus 1c1",
+				AssetsManager::getLib()->getFont("futuraH"), A_W);
+			break;
+		}
+	}
 }
