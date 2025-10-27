@@ -63,19 +63,23 @@ void Player::eraseFull()
 	}
 	if (lineCount) { //Score increase (~ standard score system minus no-line TSpins)
 		float mul = 1;
+
 		if (backToBack) mul = 1.5;
 		if (tSpin) {
 			points += 400 * level * (lineCount + 1) * mul;
 			backToBack = true;
+			attack(lineCount * 2 * mul);
 		}
 		else {
 			if (lineCount == 4) {
 				points += 800 * level * mul;
 				backToBack = true;
+				attack(4 * mul);
 			}
 			else {
 				points += (100 + 200 * (lineCount - 1)) * level;
 				backToBack = false;
+				attack(lineCount - 1);
 			}
 		}
 	}
@@ -87,6 +91,15 @@ void Player::eraseFull()
 	if (score >= 40 && mode == GM_SPRINT40L) {
 		endTime = SDL_GetTicks();
 		status = PS_WIN;
+	}
+}
+
+void Player::attack(int power)
+{
+	if (mode == GM_VERSUS) {
+		for (int i = 0; i < power; i++) {
+			attackBuffer->attack(type, garbagePile[std::min(i, (int)garbagePile.size() - 1)]);
+		}
 	}
 }
 
@@ -148,6 +161,20 @@ void Player::renderLineBreaks()
 	}
 }
 
+void Player::collectGarbage()
+{
+	std::vector<int> line;
+
+	while ((line = attackBuffer->collect(type)).size()) {
+		for (int j = 0; j < 19; j++) {
+			for (int i = 0; i < 10; i++)
+				grid[j * 10 + i] = grid[(j + 1) * 10 + i];
+		}
+		for (int i = 0; i < 10; i++)
+			grid[190 + i] = line[i];
+	}
+}
+
 std::string Player::chronoText(Uint32 timer) const 
 {
 	return (std::to_string(timer / 60000) + "'"
@@ -179,6 +206,7 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 	DASTick = 0;
 	DASBool = false; holdAllowed = true;
 	backToBack = false; tSpin = false;
+	garbagePile = {};
 
 	UI = SDL_CreateTexture(Window::getWindow()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 576, 656);
 	SDL_SetTextureBlendMode(UI, SDL_BLENDMODE_BLEND);
@@ -214,9 +242,13 @@ bool Player::update()
 	Uint32 currentTick = SDL_GetTicks();
 
 	if (SDL_GetTicks() - startTime > 3000 && status == PS_GAME) {
+		collectGarbage();
+
 		if (keyboard->keyDown(KEY_DOWN, type)) {
 			if ((currentTick - lastDrop) > (gravity / 12)) {
 				if (!currentBlock->drop()) {
+					if (mode == GM_VERSUS)
+						garbagePile = currentBlock->getMolding(grid);
 					if (currentBlock->lodge(grid))
 						status = PS_LOSS;
 					newBlock();
@@ -250,6 +282,8 @@ bool Player::update()
 				hardDropAnimLenght = 3; //Lenght in frames of the hard drop visual effect
 				hardDropBlockType = currentBlock->getType();
 				currentBlock->hardDrop();
+				if (mode == GM_VERSUS)
+					garbagePile = currentBlock->getMolding(grid);
 				if (currentBlock->lodge(grid))
 					status = PS_LOSS;
 				else 
@@ -259,6 +293,8 @@ bool Player::update()
 			}
 			if ((currentTick - lastDrop) > gravity) {
 				if (!currentBlock->drop()) {
+					if (mode == GM_VERSUS)
+						garbagePile = currentBlock->getMolding(grid);
 					if (currentBlock->lodge(grid))
 						status = PS_LOSS;
 					newBlock();
@@ -303,6 +339,7 @@ bool Player::update()
 			if (attackBuffer->ready(type))
 				return true;
 		}
+		score = attackBuffer->getIncomingAttackPower(type);
 	}
 	return false;
 }

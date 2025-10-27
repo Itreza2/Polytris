@@ -57,6 +57,8 @@ public:
 	bool lodge(unsigned int* grid_);
 
 	std::vector<int> getHeights();
+
+	std::vector<std::vector<int>> getMolding(unsigned int* grid_);
 };
 
 std::vector<std::vector<std::vector<unsigned int>>> Block::SRS = {};

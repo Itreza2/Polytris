@@ -77,6 +77,8 @@ private:
 
 	Block* currentBlock;
 
+	std::vector<std::vector<int>> garbagePile;
+
 	SDL_Texture* UI;
 
 	std::vector<LineBreak> lineBreakAnims;
@@ -94,6 +96,10 @@ private:
 	void renderGrid();
 
 	void renderLineBreaks();
+
+	void collectGarbage();
+
+	void attack(int power);
 
 	//[Tool functions]//
 

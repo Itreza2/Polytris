@@ -115,6 +115,8 @@ bool Menu::uptate()
 		}
 		if (keyboard->keyDown(KEY_ANY)) {
 			inGame = true;
+			delete attackBuffer;
+			attackBuffer = new AttackBuffer();
 			player1 = new Player(PLAYER_1, currentMode, attackBuffer, PS_IDLE);
 			player2 = new Player(PLAYER_2, currentMode, attackBuffer, PS_IDLE);
 		}

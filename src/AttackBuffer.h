@@ -13,8 +13,6 @@ private:
 	
 	Caller_ attacker;
 
-	int value;
-
 	std::vector<std::vector<int>> garbagePile;
 
 public:
@@ -30,5 +28,7 @@ public:
 	void declareLoss() { over = true; }
 
 	bool isOver() const { return over; }
+
+	int getIncomingAttackPower(Caller_ caller);
 
 };

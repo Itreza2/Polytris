@@ -6,7 +6,6 @@ AttackBuffer::AttackBuffer()
 	over = false;
 	start = 0;
 	attacker = PLAYER_1;
-	value = 0;
 	garbagePile = {};
 }
 
@@ -21,17 +20,14 @@ bool AttackBuffer::ready(Caller_ caller)
 
 void AttackBuffer::attack(Caller_ caller, std::vector<int> line) 
 {
-	if (!value) {
+	if (!garbagePile.size()) {
 		attacker = caller;
-		garbagePile.clear();
 		start = SDL_GetTicks();
 	}
-	if (caller == attacker) {
-		value++;
+	if (caller == attacker)
 		garbagePile.push_back(line);
-	}
 	else
-		value--;
+		garbagePile.erase(garbagePile.begin());
 }
 
 std::vector<int> AttackBuffer::collect(Caller_ caller)
@@ -43,4 +39,12 @@ std::vector<int> AttackBuffer::collect(Caller_ caller)
 		garbagePile.erase(garbagePile.begin());
 	}
 	return line;
+}
+
+int AttackBuffer::getIncomingAttackPower(Caller_ caller)
+{
+	if (caller == attacker)
+		return 0;
+	else
+		return garbagePile.size();
 }

@@ -182,6 +182,7 @@ bool Block::lodge(unsigned int* grid_)
 			}
 		}
 	}
+	delete shadow;
 	return out;
 }
 
@@ -203,4 +204,34 @@ std::vector<int> Block::getHeights()
 		}
 	}
 	return returnVector;
+}
+
+std::vector<std::vector<int>> Block::getMolding(unsigned int* grid_)
+{
+	unsigned int SRSIndex = type * 4 + rotation;
+	int shapeSize = static_cast<int>(SRS[SRSIndex].size());
+	bool full;
+	std::vector<std::vector<int>> lines = {};
+
+	for (int j = 0; j < shapeSize; j++) {
+		full = true;
+		for (int i = 0; i < 10; i++) {
+			if (!grid[(j + y) * 10 + i]) {
+				if (i < x || i - x > shapeSize - 1)
+					full = false;
+				else if (!SRS[SRSIndex][j][i - x])
+					full = false;
+			}
+		}
+		if (full) {
+			lines.push_back({});
+			for (int i = 0; i < 10; i++) {
+				if (grid[(j + y) * 10 + i])
+					lines[lines.size() - 1].push_back(8);
+				else
+					lines[lines.size() - 1].push_back(0);
+			}
+		}
+	}
+	return lines;
 }
