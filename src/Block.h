@@ -59,6 +59,8 @@ public:
 	std::vector<int> getHeights();
 
 	std::vector<std::vector<int>> getMolding(unsigned int* grid_);
+
+	void bounce() { if (!correctPlacement(x, y, rotation)) y--; }
 };
 
 std::vector<std::vector<std::vector<unsigned int>>> Block::SRS = {};

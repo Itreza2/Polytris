@@ -127,8 +127,8 @@ bool Menu::uptate()
 //To refactor : quick implementation for test purposes
 void Menu::render()
 {
-	SDL_Rect p1Area = { 192, 212, 576, 656 };
-	SDL_Rect p2Area = { 1152, 212, 576, 656 };
+	SDL_Rect p1Area = { 256, 212, 576, 656 };
+	SDL_Rect p2Area = { 1088, 212, 576, 656 };
 	SDL_Rect dst;
 
 	renderBg();
@@ -144,6 +144,10 @@ void Menu::render()
 			AssetsManager::getLib()->getFont("futuraCountdown"), A_SW);
 		createText(Window::getWindow()->renderer, 620, 285, "v1.0",
 			AssetsManager::getLib()->getFont("futuraS"), A_SW);
+
+		dst = { 1000, 360, 700, 420 };
+		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alpha25"), NULL, &dst);
+		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("controls"), NULL, &dst);
 
 		dst = { 0, 980, 1920, 64 };
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alphaRed"), NULL, &dst);

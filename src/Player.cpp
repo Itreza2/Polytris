@@ -172,6 +172,7 @@ void Player::collectGarbage()
 		}
 		for (int i = 0; i < 10; i++)
 			grid[190 + i] = line[i];
+		currentBlock->bounce();
 	}
 }
 
