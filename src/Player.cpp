@@ -122,7 +122,7 @@ void Player::renderGrid()
 		blockAbove = false;
 		for (int j = 0; j < 20; j++) {
 			blockType = static_cast<int>(gridCopy[j * 10 + i]);
-			if (j >= hardDropAnims[i] && !blockType && !blockAbove)
+			if (j >= hardDropAnims[i] && !blockType && !blockAbove && 0) //Anims disabled for now
 				src = { (hardDropBlockType + 1) * 64 + 4, 5, 1, 1 };
 			else {
 				if (blockType)

@@ -22,6 +22,8 @@ public:
 
 	static Window* getWindow();
 
+	void toggleFullscreen();
+
 };
 
 Window* Window::instance = nullptr;

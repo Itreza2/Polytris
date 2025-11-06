@@ -15,7 +15,6 @@ enum Anchor
 	A_E,
 };
 
-//TODO : handle colors (other than white)
 /**
 * @brief render text on a rendering context
 * @param renderer the root SDL renderer on which the text will be applied
