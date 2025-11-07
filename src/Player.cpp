@@ -247,7 +247,7 @@ bool Player::update()
 
 		if (keyboard->keyDown(KEY_DOWN, type)) {
 			if ((currentTick - lastDrop) > (gravity / 12)) {
-				if (!currentBlock->drop()) {
+				if (!currentBlock->drop() && !currentBlock->locked()) {
 					if (mode == GM_VERSUS)
 						garbagePile = currentBlock->getMolding(grid);
 					if (currentBlock->lodge(grid))
@@ -293,7 +293,7 @@ bool Player::update()
 				lastHDrop = currentTick;
 			}
 			if ((currentTick - lastDrop) > gravity) {
-				if (!currentBlock->drop()) {
+				if (!currentBlock->drop() && !currentBlock->locked()) {
 					if (mode == GM_VERSUS)
 						garbagePile = currentBlock->getMolding(grid);
 					if (currentBlock->lodge(grid))

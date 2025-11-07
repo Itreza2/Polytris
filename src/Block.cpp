@@ -78,6 +78,16 @@ bool Block::correctPlacement(int x_, int y_, unsigned int rotation_)
 	return true;
 }
 
+void Block::updateLockDelay(bool onGround)
+{
+	if (onGround) {
+		if (lockState)
+			lockDelay -= std::min(lockDelay, SDL_GetTicks() - lastLockUpdate);
+		lastLockUpdate = SDL_GetTicks();
+	}
+	lockState = onGround;
+}
+
 Block::Block(unsigned int* grid, unsigned int type)
 {
 	loadSRS();
@@ -87,6 +97,10 @@ Block::Block(unsigned int* grid, unsigned int type)
 	this->grid = grid;
 	this->type = type;
 	rotation = 0;
+	
+	lastLockUpdate = 0;
+	lockDelay = 500;
+	lockState = false;
 }
 
 Block::Block(Block& object)
@@ -96,15 +110,21 @@ Block::Block(Block& object)
 	grid = object.grid;
 	type = object.type;
 	rotation = object.rotation;
+
+	lastLockUpdate = 0;
+	lockDelay = 500;
+	lockState = false;
 }
 
 bool Block::drop()
 {
 	if (correctPlacement(x, y + 1, rotation)) {
 		y += 1;
+		updateLockDelay(false);
 		return true;
 	}
 	else
+		updateLockDelay(true);
 		return false;
 }
 

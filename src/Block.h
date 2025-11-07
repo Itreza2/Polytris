@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <SDL.h> //GetTicks, should find a workaround
+#include <algorithm>
 
 class Block
 {
@@ -30,9 +32,15 @@ private:
 
 	unsigned int* grid;  // /!\ A pointer toward the player's grid, use caution /!\
 
+	Uint32 lockDelay, lastLockUpdate;
+
+	bool lockState;
+
 	//[Private methods]//
 
 	bool correctPlacement(int x_, int y_, unsigned int rotation_);
+
+	void updateLockDelay(bool onGround);
 
 public:
 	
@@ -61,6 +69,8 @@ public:
 	std::vector<std::vector<int>> getMolding(unsigned int* grid_);
 
 	void bounce() { if (!correctPlacement(x, y, rotation)) y--; }
+
+	bool locked() const { return (lockDelay); }
 };
 
 std::vector<std::vector<std::vector<unsigned int>>> Block::SRS = {};
