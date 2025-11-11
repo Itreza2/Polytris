@@ -7,6 +7,12 @@
 #include <SDL.h> //GetTicks, should find a workaround
 #include <algorithm>
 
+/**
+* @brief Struct used to keep track of the line break animations
+* /!\ To refactor soon /!\
+*/
+struct Reflection { int y; int x; Uint32 spawnTime; };
+
 class Block
 {
 
@@ -67,6 +73,8 @@ public:
 	std::vector<int> getHeights();
 
 	std::vector<std::vector<int>> getMolding(unsigned int* grid_);
+
+	std::vector<Reflection> getReflections();
 
 	void bounce() { if (!correctPlacement(x, y, rotation)) y--; }
 

@@ -255,3 +255,20 @@ std::vector<std::vector<int>> Block::getMolding(unsigned int* grid_)
 	}
 	return lines;
 }
+
+std::vector<Reflection> Block::getReflections()
+{
+	unsigned int SRSIndex = type * 4 + rotation;
+	int shapeSize = static_cast<int>(SRS[SRSIndex].size());
+	std::vector<Reflection> reflections = {};
+
+	for (int j = 0; j < shapeSize; j++) {
+		for (int i = 0; i < shapeSize; i++) {
+			if (i + x >= 0 && i + x < 10 && j + y >= 0 && j + y < 20
+				&& SRS[SRSIndex][j][i]) {
+				reflections.push_back({ i + x, j + y, SDL_GetTicks() });
+			}
+		}
+	}
+	return reflections;
+}

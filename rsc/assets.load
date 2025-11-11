@@ -15,3 +15,4 @@ TEXTURE,alpha25,rsc/sprites/alpha25.png,1
 TEXTURE,alphaRed,rsc/sprites/alphaRed.png,1
 TEXTURE,logo,rsc/sprites/polytris.png,1
 TEXTURE,controls,rsc/sprites/controls.png,1
+TEXTURE,reflection,rsc/sprites/reflection.png,1

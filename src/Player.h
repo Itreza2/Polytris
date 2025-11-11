@@ -82,8 +82,7 @@ private:
 	SDL_Texture* UI;
 
 	std::vector<LineBreak> lineBreakAnims;
-	std::vector<int> hardDropAnims;
-	int hardDropAnimLenght, hardDropBlockType;
+	std::vector<Reflection> reflectionAnims;
 
 	//[Private Methods]//
 

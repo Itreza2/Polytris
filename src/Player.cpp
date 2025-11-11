@@ -106,9 +106,10 @@ void Player::attack(int power)
 void Player::renderGrid()
 {
 	SDL_Texture* blocks = AssetsManager::getLib()->getTexture("blocks");
+	SDL_Texture* reflections = AssetsManager::getLib()->getTexture("reflection");
 	SDL_Rect src, dst;
+	Uint32 currentTime = SDL_GetTicks();
 	int blockType;
-	bool blockAbove;
 
 	//Creation of the rendered grid
 	unsigned int* gridCopy = (unsigned int*)malloc(sizeof(unsigned int) * 200);
@@ -119,23 +120,23 @@ void Player::renderGrid()
 	currentBlock->lodge(gridCopy);
 
 	for (int i = 0; i < 10; i++) {
-		blockAbove = false;
 		for (int j = 0; j < 20; j++) {
 			blockType = static_cast<int>(gridCopy[j * 10 + i]);
-			if (j >= hardDropAnims[i] && !blockType && !blockAbove && 0) //Anims disabled for now
-				src = { (hardDropBlockType + 1) * 64 + 4, 5, 1, 1 };
-			else {
-				if (blockType)
-					blockAbove = true;
-				src = { blockType * 64, 0, 64, 64 };
-			}
+			src = { blockType * 64, 0, 64, 64 };
 			dst = { 112 + i * 32, 8 + j * 32, 32, 32 }; //112 ; 8 is the top-left corner of the board on the grid sprite
 			SDL_RenderCopy(Window::getWindow()->renderer, blocks, &src, &dst);
 		}
 	}
-	if (!hardDropAnimLenght)
-		hardDropAnims.assign(10, 20);
-	hardDropAnimLenght--;
+	for (int i = reflectionAnims.size() - 1; i >= 0; i--) {
+		if (currentTime - reflectionAnims[i].spawnTime > 350) {
+			reflectionAnims.pop_back();
+		}
+		else if (grid[reflectionAnims[i].x * 10 + reflectionAnims[i].y]) {
+			src = { (int)((currentTime - reflectionAnims[i].spawnTime) / 50) * 64, 0, 64, 64 };
+			dst = { 112 + reflectionAnims[i].y * 32, 8 + reflectionAnims[i].x * 32, 32, 32 };
+			SDL_RenderCopy(Window::getWindow()->renderer, reflections, &src, &dst);
+		}
+	}
 }
 
 void Player::renderLineBreaks()
@@ -211,8 +212,6 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 
 	UI = SDL_CreateTexture(Window::getWindow()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 576, 656);
 	SDL_SetTextureBlendMode(UI, SDL_BLENDMODE_BLEND);
-	lineBreakAnims = {}; hardDropAnims.assign(10, 20);
-	hardDropAnimLenght = 0; hardDropBlockType = 0;
 
 	grid = (unsigned int*)malloc(sizeof(unsigned int) * 200);
 	typeQuantity = (unsigned int*)malloc(sizeof(unsigned int) * 7);
@@ -252,6 +251,8 @@ bool Player::update()
 						garbagePile = currentBlock->getMolding(grid);
 					if (currentBlock->lodge(grid))
 						status = PS_LOSS;
+					std::vector<Reflection> newReflections = currentBlock->getReflections();
+					reflectionAnims.insert(reflectionAnims.begin(), newReflections.begin(), newReflections.end());
 					newBlock();
 				} else 
 					tSpin = false;
@@ -279,9 +280,6 @@ bool Player::update()
 				}
 			}
 			if (keyboard->keyDown(KEY_HDROP, type) && (currentTick - lastHDrop) > HD_Lock) {
-				hardDropAnims = currentBlock->getHeights();
-				hardDropAnimLenght = 3; //Lenght in frames of the hard drop visual effect
-				hardDropBlockType = currentBlock->getType();
 				currentBlock->hardDrop();
 				if (mode == GM_VERSUS)
 					garbagePile = currentBlock->getMolding(grid);
@@ -289,6 +287,8 @@ bool Player::update()
 					status = PS_LOSS;
 				else 
 					tSpin = false;
+				std::vector<Reflection> newReflections = currentBlock->getReflections();
+				reflectionAnims.insert(reflectionAnims.begin(), newReflections.begin(), newReflections.end());
 				newBlock();
 				lastHDrop = currentTick;
 			}
@@ -298,6 +298,8 @@ bool Player::update()
 						garbagePile = currentBlock->getMolding(grid);
 					if (currentBlock->lodge(grid))
 						status = PS_LOSS;
+					std::vector<Reflection> newReflections = currentBlock->getReflections();
+					reflectionAnims.insert(reflectionAnims.begin(), newReflections.begin(), newReflections.end());
 					newBlock();
 				} else
 					tSpin = false;
