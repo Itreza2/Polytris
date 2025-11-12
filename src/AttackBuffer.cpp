@@ -4,6 +4,7 @@ AttackBuffer::AttackBuffer()
 {
 	p1Ready = false; p2Ready = false;
 	over = false;
+	randomSeed = rand();
 	start = 0;
 	attacker = PLAYER_1;
 	garbagePile = {};

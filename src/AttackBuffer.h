@@ -5,12 +5,16 @@
 
 class AttackBuffer
 {
+public:
+
+	Uint32 randomSeed;
+
 private:
 
 	bool p1Ready, p2Ready, over;
 
 	Uint32 start;
-	
+
 	Caller_ attacker;
 
 	std::vector<std::vector<int>> garbagePile;

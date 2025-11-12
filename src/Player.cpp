@@ -13,7 +13,8 @@ void Player::newBlock()
 	queue.erase(queue.begin());
 
 	while (!randomCtr) {
-		newType = rand() % 7;
+		int __cdecl test = random();
+		newType = test % 7;
 		if (typeQuantity[newType] < 2)
 			randomCtr = true;
 	}
@@ -190,6 +191,16 @@ void Player::increaseLevel()
 	gravity = (Uint32)(1000 * std::pow(0.8 - ((level + 1) * 0.007), level + 1));
 }
 
+int __cdecl Player::random() 
+{
+	if (mode == GM_VERSUS) { // Controled seeded random number generator
+		int __cdecl rand = rdmGen();
+		return std::max(rand, -rand);
+	}
+	else // Default time-seeded random number generator
+		return rand();
+}
+
 Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus defaultStatus)
 {
 	this->type = type;
@@ -197,6 +208,8 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 	attackBuffer = buffer;
 	status = defaultStatus;
 	score = 0; points = 0;
+
+	rdmGen = std::mt19937(attackBuffer->randomSeed);
 
 	level = 0;
 	increaseLevel();
@@ -227,7 +240,7 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 	//Initialisation of the queue with 7-bag
 	std::vector<unsigned int> bag = { 0, 1, 2, 3, 4, 5, 6 };
 	while (!bag.empty()) {
-		size_t index = rand() % bag.size();
+		size_t index = random() % bag.size();
 		queue.push_back(bag[index]);
 		bag.erase(bag.begin() + index);
 	}

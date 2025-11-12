@@ -2,6 +2,7 @@
 #include <exception>
 #include <SDL.h>
 #include <vector>
+#include <random>
 #include <algorithm>
 
 #include "Block.h"
@@ -47,6 +48,7 @@ private:
 	Caller_ type;
 	GameMode mode;
 	AttackBuffer* attackBuffer;
+	std::mt19937 rdmGen;
 
 	PlayerStatus status;
 
@@ -105,6 +107,8 @@ private:
 	std::string chronoText(Uint32 timer) const;
 
 	void increaseLevel();
+
+	int __cdecl random();
 
 public:
 
