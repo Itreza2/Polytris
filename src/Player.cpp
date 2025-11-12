@@ -51,7 +51,7 @@ void Player::eraseFull()
 				full = false;
 		}
 		if (full) {
-			for (int line = j; line > 1; line--) {
+			for (int line = j; line > 0; line--) {
 				for (int i = 0; i < 10; i++)
 					grid[line * 10 + i] = grid[(line - 1) * 10 + i];
 			}
