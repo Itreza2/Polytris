@@ -2,6 +2,7 @@
 #include <SDL.h>
 
 #include "Player.h"
+#include "Leaderboard.h"
 #include "Window.h"
 #include "Keyboard.h"
 #include "AttackBuffer.h"
@@ -16,6 +17,8 @@ private:
 	GameMode currentMode;
 
 	Uint32 lastModeChange, msgStart;
+
+	Leaderboard* marathonLeaderboard, *sprintLeaderboard;
 
 	Player* player1, *player2;
 
@@ -35,7 +38,7 @@ public:
 
 	Menu();
 
-	bool uptate();
+	bool update();
 
 	void render();
 };

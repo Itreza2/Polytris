@@ -23,7 +23,7 @@ int main(unsigned int argc, char** argv)
 	bool  exit = false;
 	while (!exit) {
 		exit = (Keyboard::getKeyboard()->catchEvents()
-			 || menu.uptate());
+			 || menu.update());
 
 		if (SDL_GetTicks() - lastFrame > 16) {
 

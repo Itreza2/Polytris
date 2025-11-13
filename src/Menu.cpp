@@ -62,6 +62,9 @@ Menu::Menu()
 	currentMode = GM_MARATHON;
 	lastModeChange = 0; msgStart = SDL_GetTicks();
 
+	marathonLeaderboard = new Leaderboard(GM_MARATHON);
+	sprintLeaderboard = new Leaderboard(GM_SPRINT40L);
+
 	player1 = nullptr; 
 	player2 = nullptr;
 	attackBuffer = new AttackBuffer();
@@ -71,7 +74,7 @@ Menu::Menu()
 	std::getline(file, message);
 }
 
-bool Menu::uptate() 
+bool Menu::update() 
 {
 	Keyboard* keyboard = Keyboard::getKeyboard();
 

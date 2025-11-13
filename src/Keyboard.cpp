@@ -16,9 +16,9 @@ Keyboard::Keyboard()
 		keyMapping[9] = SDL_SCANCODE_G;
 		keyMapping[10] = SDL_SCANCODE_H;
 		keyMapping[11] = SDL_SCANCODE_W;
-		keyMapping[12] = SDL_SCANCODE_A;
-		keyMapping[13] = SDL_SCANCODE_S;
-		keyMapping[14] = SDL_SCANCODE_D;
+		keyMapping[12] = SDL_SCANCODE_S;
+		keyMapping[13] = SDL_SCANCODE_D;
+		keyMapping[14] = SDL_SCANCODE_A;
 		keyMapping[15] = SDL_SCANCODE_U;
 		keyMapping[16] = SDL_SCANCODE_I;
 		keyMapping[17] = SDL_SCANCODE_O;

@@ -8,6 +8,7 @@
 #include "Block.h"
 #include "Window.h"
 #include "Keyboard.h"
+#include "Leaderboard.h"
 #include "AssetsManager.h"
 #include "AttackBuffer.h"
 
@@ -24,12 +25,6 @@ enum PlayerStatus {
 	PS_LOSS,
 	PS_WIN,
 	PS_READY,
-};
-
-enum GameMode {
-	GM_MARATHON = 0,
-	GM_SPRINT40L = 1,
-	GM_VERSUS = 2,
 };
 
 /**
