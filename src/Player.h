@@ -11,6 +11,7 @@
 #include "Leaderboard.h"
 #include "AssetsManager.h"
 #include "AttackBuffer.h"
+#include "NameEntry.h"
 
 #include "textTools.cpp"
 
@@ -81,6 +82,8 @@ private:
 	std::vector<LineBreak> lineBreakAnims;
 	std::vector<Reflection> reflectionAnims;
 
+	NameEntry* nameEntry;
+
 	//[Private Methods]//
 
 	void newBlock();
@@ -111,7 +114,7 @@ public:
 
 	Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus defaultStatus = PS_GAME);
 
-	~Player() { free(grid); }
+	~Player() { free(grid); delete nameEntry; }
 
 	//[Public methods]//
 

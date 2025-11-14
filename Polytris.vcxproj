@@ -25,6 +25,7 @@
     <ClCompile Include="src\Leaderboard.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Menu.cpp" />
+    <ClCompile Include="src\NameEntry.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\AssetsManager.cpp" />
     <ClCompile Include="src\textTools.cpp" />
@@ -36,6 +37,7 @@
     <ClInclude Include="src\Keyboard.h" />
     <ClInclude Include="src\Leaderboard.h" />
     <ClInclude Include="src\Menu.h" />
+    <ClInclude Include="src\NameEntry.h" />
     <ClInclude Include="src\Player.h" />
     <ClInclude Include="src\AssetsManager.h" />
     <ClInclude Include="src\Window.h" />

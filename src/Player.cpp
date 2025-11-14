@@ -208,6 +208,7 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 	attackBuffer = buffer;
 	status = defaultStatus;
 	score = 0; points = 0;
+	nameEntry = new NameEntry(type);
 
 	rdmGen = std::mt19937(attackBuffer->randomSeed);
 
@@ -357,6 +358,8 @@ bool Player::update()
 		}
 		score = attackBuffer->getIncomingAttackPower(type);
 	}
+	if ((mode == GM_MARATHON && status == PS_LOSS) || (mode == GM_SPRINT40L && status == PS_WIN))
+		nameEntry->update();
 	return false;
 }
 
@@ -435,10 +438,14 @@ SDL_Texture* Player::render()
 		break;
 	case PS_LOSS:
 		if (mode == GM_MARATHON) {
-			createText(Window::getWindow()->renderer, 272, 258, (std::to_string(points) + "pt").c_str(),
+			createText(Window::getWindow()->renderer, 272, 198, (std::to_string(points) + "pt").c_str(),
 				AssetsManager::getLib()->getFont("futuraB"), A_CENTER);
-			createText(Window::getWindow()->renderer, 272, 328, "Bravo !",
+			createText(Window::getWindow()->renderer, 272, 268, "Bravo !",
 				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+			dst = { 130, 340, 280, 176 };
+			SDL_Texture* texture = nameEntry->getTexture();
+			SDL_SetRenderTarget(Window::getWindow()->renderer, UI);
+			SDL_RenderCopy(Window::getWindow()->renderer, texture, NULL, &dst);
 		}
 		else {
 			createText(Window::getWindow()->renderer, 272, 328, "Perdu :(",
@@ -447,10 +454,14 @@ SDL_Texture* Player::render()
 		break;
 	case PS_WIN:
 		if (mode == GM_SPRINT40L)
-			createText(Window::getWindow()->renderer, 272, 258, chronoText(endTime - startTime - 3000).c_str(),
+			createText(Window::getWindow()->renderer, 272, 198, chronoText(endTime - startTime - 3000).c_str(),
 				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
-		createText(Window::getWindow()->renderer, 272, 328, "Bravo !",
+		createText(Window::getWindow()->renderer, 272, 268, "Bravo !",
 			AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+		dst = { 130, 340, 280, 176 };
+		SDL_Texture* texture = nameEntry->getTexture();
+		SDL_SetRenderTarget(Window::getWindow()->renderer, UI);
+		SDL_RenderCopy(Window::getWindow()->renderer, texture, NULL, &dst);
 		break;
 	case PS_READY:
 		createText(Window::getWindow()->renderer, 272, 328, "Pret",

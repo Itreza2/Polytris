@@ -16,3 +16,5 @@ TEXTURE,alphaRed,rsc/sprites/alphaRed.png,1
 TEXTURE,logo,rsc/sprites/polytris.png,1
 TEXTURE,controls,rsc/sprites/controls.png,1
 TEXTURE,reflection,rsc/sprites/reflection.png,1
+TEXTURE,entry,rsc/sprites/entry.png,1
+TEXTURE,alpha0,rsc/sprites/alpha0.png,0
