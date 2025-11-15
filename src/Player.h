@@ -83,6 +83,7 @@ private:
 	std::vector<Reflection> reflectionAnims;
 
 	NameEntry* nameEntry;
+	Highscore* finalScore;
 
 	//[Private Methods]//
 
@@ -102,8 +103,6 @@ private:
 
 	//[Tool functions]//
 
-	std::string chronoText(Uint32 timer) const;
-
 	void increaseLevel();
 
 	int __cdecl random();
@@ -114,12 +113,14 @@ public:
 
 	Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus defaultStatus = PS_GAME);
 
-	~Player() { free(grid); delete nameEntry; }
+	~Player() { free(grid); delete nameEntry; delete finalScore; }
 
 	//[Public methods]//
 
 	bool update();
 
 	SDL_Texture* render();
+
+	Highscore* getFinalScore() { return finalScore; }
 
 };

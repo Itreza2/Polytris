@@ -7,7 +7,12 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <ctime>
 #include <iostream>
+
+#include "Window.h"
+#include "AssetsManager.h"
+#include "textTools.cpp"
 
 enum GameMode {
 	GM_MARATHON = 0,
@@ -22,6 +27,8 @@ struct Highscore {
 	int time;
 
 	Highscore(std::string text);
+
+	Highscore(std::string author, int score, int time);
 
 	std::string serialize();
 };
@@ -55,4 +62,6 @@ public:
 	void submit(Highscore newScore);
 
 	SDL_Texture* getTexture();
+
+	static std::string chronoText(Uint32 timer);
 };

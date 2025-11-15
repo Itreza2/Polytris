@@ -56,6 +56,16 @@ void Menu::newAttackBuffer()
 	player2 = new Player(PLAYER_2, currentMode, attackBuffer, PS_IDLE);
 }
 
+void Menu::submitScore(Highscore* newScore)
+{
+	if (newScore != nullptr) {
+		if (currentMode == GM_MARATHON)
+			marathonLeaderboard->submit(*newScore);
+		if (currentMode == GM_SPRINT40L)
+			sprintLeaderboard->submit(*newScore);
+	}
+}
+
 Menu::Menu() 
 { 
 	inGame = false;
@@ -80,6 +90,8 @@ bool Menu::update()
 
 	if (inGame) {
 		if (keyboard->keyDown(KEY_EXIT)) {
+			submitScore(player1->getFinalScore());
+			submitScore(player2->getFinalScore());
 			inGame = false; //Back to main menu
 			delete player1;
 			delete player2;
@@ -89,6 +101,7 @@ bool Menu::update()
 			if (attackBuffer->isOver())
 				newAttackBuffer();
 			else {
+				submitScore(player1->getFinalScore());
 				delete player1;
 				player1 = new Player(PLAYER_1, currentMode, attackBuffer);
 			}
@@ -97,6 +110,7 @@ bool Menu::update()
 			if (attackBuffer->isOver())
 				newAttackBuffer();
 			else {
+				submitScore(player2->getFinalScore());
 				delete player2;
 				player2 = new Player(PLAYER_2, currentMode, attackBuffer);
 			}
@@ -148,14 +162,11 @@ void Menu::render()
 		createText(Window::getWindow()->renderer, 620, 285, "v1.0",
 			AssetsManager::getLib()->getFont("futuraS"), A_SW);
 
-		dst = { 1000, 360, 700, 420 };
-		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alpha25"), NULL, &dst);
-		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("controls"), NULL, &dst);
-
 		dst = { 0, 980, 1920, 64 };
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alphaRed"), NULL, &dst);
 		renderMsg();
 
+		dst = { 1060, 120, 600, 820 };
 		switch (currentMode)
 		{
 		case GM_MARATHON:
@@ -165,6 +176,7 @@ void Menu::render()
 				AssetsManager::getLib()->getFont("futuraB"), A_W);
 			createText(Window::getWindow()->renderer, 200, 710, "Versus 1c1",
 				AssetsManager::getLib()->getFont("futuraB"), A_W);
+			SDL_RenderCopy(Window::getWindow()->renderer, marathonLeaderboard->getTexture(), NULL, &dst);
 			break;
 		case GM_SPRINT40L:
 			createText(Window::getWindow()->renderer, 200, 470, "Marathon",
@@ -173,6 +185,7 @@ void Menu::render()
 				AssetsManager::getLib()->getFont("futuraH"), A_W);
 			createText(Window::getWindow()->renderer, 200, 710, "Versus 1c1",
 				AssetsManager::getLib()->getFont("futuraB"), A_W);
+			SDL_RenderCopy(Window::getWindow()->renderer, sprintLeaderboard->getTexture(), NULL, &dst);
 			break;
 		case GM_VERSUS:
 			createText(Window::getWindow()->renderer, 200, 470, "Marathon",
@@ -181,6 +194,8 @@ void Menu::render()
 				AssetsManager::getLib()->getFont("futuraB"), A_W);
 			createText(Window::getWindow()->renderer, 200, 710, "Versus 1c1",
 				AssetsManager::getLib()->getFont("futuraH"), A_W);
+			createText(Window::getWindow()->renderer, 1360, 530, "Pas de classement pour ce mode de jeu :(",
+				AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
 			break;
 		}
 	}

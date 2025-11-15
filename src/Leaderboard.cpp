@@ -15,6 +15,20 @@ Highscore::Highscore(std::string text)
 	time = stoi(word);
 }
 
+Highscore::Highscore(std::string author, int score, int time)
+{
+	this->author = author;
+	this->score = score;
+	this->time = time;
+
+	time_t timestamp = std::time(NULL);
+	struct tm datetime;
+	localtime_s(&datetime, &timestamp);
+	char output[50];
+	strftime(output, 50, "%b %e %H:%M:%S %Y", &datetime);
+	date = output;
+}
+
 std::string Highscore::serialize()
 {
 	return (
@@ -32,8 +46,10 @@ void Leaderboard::load()
 
 	leaderboard = {};
 	leaderboardWeekly = {};
+	int lastSession = -1;
 
 	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
+	std::chrono::system_clock::time_point currentDate = std::chrono::system_clock::now();
 
 	std::ifstream file( // All-time leaderboard
 		std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores\\" + std::to_string(mode)
@@ -42,10 +58,17 @@ void Leaderboard::load()
 		while (std::getline(file, line))
 			leaderboard.push_back(Highscore(line));
 	} file.close();
+	file = std::ifstream( // Week of last session
+		std::string(systemDrive) + "\\ProgramData\\Polytris\\last_session_week"
+	);
+	if (file.is_open()) {
+		std::getline(file, line);
+		lastSession = atoi(line.c_str());
+	}
 	file = std::ifstream( // Weekly leaderboard
 		std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores\\" + std::to_string(mode) + "w"
 	);
-	if (file.is_open()) {
+	if (file.is_open() && lastSession == atoi(std::format("{0:%OW}", currentDate).c_str())) {
 		while (std::getline(file, line))
 			leaderboardWeekly.push_back(Highscore(line));
 	} file.close();
@@ -58,6 +81,7 @@ void Leaderboard::save()
 	size_t uselessBuffer;
 
 	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
+	std::chrono::system_clock::time_point currentDate = std::chrono::system_clock::now();
 
 	std::ofstream file(
 		std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores\\" + std::to_string(mode),
@@ -81,11 +105,61 @@ void Leaderboard::save()
 	for (Highscore line : leaderboardWeekly) {
 		file << line.serialize() << std::endl;
 	}
+	file = std::ofstream(
+		std::string(systemDrive) + "\\ProgramData\\Polytris\\last_session_week",
+		std::ofstream::trunc
+	);
+	file << std::format("{0:%OW}", currentDate).c_str();
 }
 
 void Leaderboard::render()
 {
+	SDL_SetRenderTarget(Window::getWindow()->renderer, texture);
 
+	SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("alpha0"), NULL, NULL);
+	SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("leaderboard"), NULL, NULL);
+
+	if (mode == GM_MARATHON)
+		createText(Window::getWindow()->renderer, 300, 30, "Top 10 Marathon",
+			AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+	if (mode == GM_SPRINT40L)
+		createText(Window::getWindow()->renderer, 300, 30, "Top 10 Sprint 40L",
+			AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+	for (int i = 0; i < leaderboard.size(); i++) {
+		createText(Window::getWindow()->renderer, 15, 78 + i * 33, ("#" + std::to_string(i + 1) + " : " + leaderboard[i].author).c_str(),
+			AssetsManager::getLib()->getFont("futuraS"), A_W);
+		createText(Window::getWindow()->renderer, 280, 78 + i * 33, leaderboard[i].date.c_str(),
+			AssetsManager::getLib()->getFont("futuraS"), A_CENTER);
+		if (mode == GM_MARATHON)
+			createText(Window::getWindow()->renderer, 585, 78 + i * 33, (std::to_string(leaderboard[i].score) + "pt").c_str(),
+				AssetsManager::getLib()->getFont("futuraS"), A_E);
+		if (mode == GM_SPRINT40L)
+			createText(Window::getWindow()->renderer, 585, 78 + i * 33, chronoText(leaderboard[i].time - 3000).c_str(),
+				AssetsManager::getLib()->getFont("futuraS"), A_E);
+	}
+	createText(Window::getWindow()->renderer, 300, 420, "Top 10 Hebdomadaire",
+		AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
+	for (int i = 0; i < leaderboardWeekly.size(); i++) {
+		createText(Window::getWindow()->renderer, 15, 468 + i * 33, ("#" + std::to_string(i + 1) + " : " + leaderboardWeekly[i].author).c_str(),
+			AssetsManager::getLib()->getFont("futuraS"), A_W);
+		createText(Window::getWindow()->renderer, 280, 468 + i * 33, leaderboardWeekly[i].date.c_str(),
+			AssetsManager::getLib()->getFont("futuraS"), A_CENTER);
+		if (mode == GM_MARATHON)
+			createText(Window::getWindow()->renderer, 585, 468 + i * 33, (std::to_string(leaderboardWeekly[i].score) + "pt").c_str(),
+				AssetsManager::getLib()->getFont("futuraS"), A_E);
+		if (mode == GM_SPRINT40L)
+			createText(Window::getWindow()->renderer, 585, 468 + i * 33, chronoText(leaderboardWeekly[i].time - 3000).c_str(),
+				AssetsManager::getLib()->getFont("futuraS"), A_E);
+	}
+
+
+	SDL_SetRenderTarget(Window::getWindow()->renderer, NULL);
+}
+
+std::string Leaderboard::chronoText(Uint32 timer)
+{
+	return (std::to_string(timer / 60000) + "'"
+		+ std::to_string(timer / 1000 % 60) + "''");
 }
 
 bool Leaderboard::scoreGreaterThan(Highscore score1, Highscore score2) const
@@ -102,7 +176,11 @@ Leaderboard::Leaderboard(GameMode mode)
 	this->mode = mode;
 	toRender = true;
 
+	texture = SDL_CreateTexture(Window::getWindow()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 600, 820);
+	SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
+
 	load();
+	save(); // Ensure the great weekly purge
 }
 
 void Leaderboard::submit(Highscore newScore)

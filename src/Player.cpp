@@ -178,12 +178,6 @@ void Player::collectGarbage()
 	}
 }
 
-std::string Player::chronoText(Uint32 timer) const 
-{
-	return (std::to_string(timer / 60000) + "'"
-		+ std::to_string(timer / 1000 % 60) + "''");
-}
-
 void Player::increaseLevel()
 {
 	level++;
@@ -208,6 +202,7 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 	attackBuffer = buffer;
 	status = defaultStatus;
 	score = 0; points = 0;
+	finalScore = nullptr;
 	nameEntry = new NameEntry(type);
 
 	rdmGen = std::mt19937(attackBuffer->randomSeed);
@@ -358,8 +353,11 @@ bool Player::update()
 		}
 		score = attackBuffer->getIncomingAttackPower(type);
 	}
-	if ((mode == GM_MARATHON && status == PS_LOSS) || (mode == GM_SPRINT40L && status == PS_WIN))
-		nameEntry->update();
+	if ((mode == GM_MARATHON && status == PS_LOSS) || (mode == GM_SPRINT40L && status == PS_WIN)) {
+		if (finalScore == nullptr)
+			finalScore = new Highscore("AAA", points, (endTime - startTime));
+		finalScore->author = nameEntry->update();
+	}
 	return false;
 }
 
@@ -404,12 +402,13 @@ SDL_Texture* Player::render()
 		renderLineBreaks();
 	}
 
+	SDL_Texture* texture;
 	switch (status)
 	{
 	case PS_IDLE:
 		if ((SDL_GetTicks() - startTime) / 500 % 2)
-		createText(Window::getWindow()->renderer, 272, 328, "En attente...",
-			AssetsManager::getLib()->getFont("futuraB"), A_CENTER);
+			createText(Window::getWindow()->renderer, 272, 328, "PRESS START",
+				AssetsManager::getLib()->getFont("futuraB"), A_CENTER);
 		break;
 	case PS_GAME:
 		if (SDL_GetTicks() - startTime < 3000) {
@@ -428,7 +427,7 @@ SDL_Texture* Player::render()
 			case GM_VERSUS:
 				break;
 			case GM_SPRINT40L:
-				createText(Window::getWindow()->renderer, 47, 150, chronoText(SDL_GetTicks() - startTime - 3000).c_str(),
+				createText(Window::getWindow()->renderer, 47, 150, Leaderboard::chronoText(SDL_GetTicks() - startTime - 3000).c_str(),
 					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
 				createText(Window::getWindow()->renderer, 47, 186, (std::to_string(score) + "/40").c_str(),
 					AssetsManager::getLib()->getFont("futuraM"), A_CENTER);
@@ -443,9 +442,12 @@ SDL_Texture* Player::render()
 			createText(Window::getWindow()->renderer, 272, 268, "Bravo !",
 				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
 			dst = { 130, 340, 280, 176 };
-			SDL_Texture* texture = nameEntry->getTexture();
+			texture = nameEntry->getTexture();
 			SDL_SetRenderTarget(Window::getWindow()->renderer, UI);
 			SDL_RenderCopy(Window::getWindow()->renderer, texture, NULL, &dst);
+			if ((SDL_GetTicks() - startTime) / 500 % 2)
+				createText(Window::getWindow()->renderer, 272, 530, "-enregistrement automatique-",
+					AssetsManager::getLib()->getFont("futuraS"), A_CENTER);
 		}
 		else {
 			createText(Window::getWindow()->renderer, 272, 328, "Perdu :(",
@@ -453,15 +455,21 @@ SDL_Texture* Player::render()
 		}
 		break;
 	case PS_WIN:
-		if (mode == GM_SPRINT40L)
-			createText(Window::getWindow()->renderer, 272, 198, chronoText(endTime - startTime - 3000).c_str(),
+		if (mode == GM_SPRINT40L) {
+			createText(Window::getWindow()->renderer, 272, 198, Leaderboard::chronoText(endTime - startTime - 3000).c_str(),
 				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
-		createText(Window::getWindow()->renderer, 272, 268, "Bravo !",
-			AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
-		dst = { 130, 340, 280, 176 };
-		SDL_Texture* texture = nameEntry->getTexture();
-		SDL_SetRenderTarget(Window::getWindow()->renderer, UI);
-		SDL_RenderCopy(Window::getWindow()->renderer, texture, NULL, &dst);
+			createText(Window::getWindow()->renderer, 272, 268, "Bravo !",
+				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
+			dst = { 130, 340, 280, 176 };
+			texture = nameEntry->getTexture();
+			SDL_SetRenderTarget(Window::getWindow()->renderer, UI);
+			SDL_RenderCopy(Window::getWindow()->renderer, texture, NULL, &dst);
+			if ((SDL_GetTicks() - startTime) / 500 % 2)
+				createText(Window::getWindow()->renderer, 272, 530, "-enregistrement automatique-",
+					AssetsManager::getLib()->getFont("futuraS"), A_CENTER);
+		} else
+			createText(Window::getWindow()->renderer, 272, 328, "Bravo !",
+				AssetsManager::getLib()->getFont("futuraH"), A_CENTER);
 		break;
 	case PS_READY:
 		createText(Window::getWindow()->renderer, 272, 328, "Pret",

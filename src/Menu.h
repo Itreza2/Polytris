@@ -34,6 +34,8 @@ private:
 
 	void newAttackBuffer();
 
+	void submitScore(Highscore* newScore);
+
 public:
 
 	Menu();
