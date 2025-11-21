@@ -40,6 +40,8 @@ public:
 
 	Menu();
 
+	~Menu() { Leaderboard::saveSessionDate(); }
+
 	bool update();
 
 	void render();

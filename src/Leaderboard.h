@@ -64,4 +64,6 @@ public:
 	SDL_Texture* getTexture();
 
 	static std::string chronoText(Uint32 timer);
+
+	static void saveSessionDate();
 };

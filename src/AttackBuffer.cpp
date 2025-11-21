@@ -36,8 +36,11 @@ std::vector<int> AttackBuffer::collect(Caller_ caller)
 	std::vector<int> line = {};
 
 	if (caller != attacker && SDL_GetTicks() - start > 2000 && garbagePile.size()) {
-		line = garbagePile[0];
-		garbagePile.erase(garbagePile.begin());
+		try { 
+			line = garbagePile[0];
+			garbagePile.erase(garbagePile.begin()); 
+		}
+		catch (...) {}; // \(°_°)/
 	}
 	return line;
 }

@@ -5,8 +5,9 @@ Window::Window() {
 	IMG_Init(IMG_INIT_PNG);
 	TTF_Init();
 
-	window = SDL_CreateWindow("Polytris", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920, 1080, SDL_WINDOW_FULLSCREEN);
+	window = SDL_CreateWindow("Polytris", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920, 1080, NULL); // No FS -> use of function
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	toggleFullscreen();
 }
 
 Window* Window::getWindow() {

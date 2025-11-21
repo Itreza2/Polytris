@@ -15,7 +15,7 @@ int main(unsigned int argc, char** argv)
 	//Initialize the window and load the assets
 	AssetsManager::getLib()->loadGroup("rsc\\assets.load", Window::getWindow()->renderer);
 
-	Menu menu = Menu();
+	Menu* menu = new Menu();
 
 	srand(static_cast<unsigned int>(time(NULL)));
 	Uint32 lastFrame = SDL_GetTicks();
@@ -23,16 +23,17 @@ int main(unsigned int argc, char** argv)
 	bool  exit = false;
 	while (!exit) {
 		exit = (Keyboard::getKeyboard()->catchEvents()
-			 || menu.update());
+			 || menu->update());
 
 		if (SDL_GetTicks() - lastFrame > 16) {
 
 			SDL_RenderClear(Window::getWindow()->renderer);
-			menu.render();
+			menu->render();
 			SDL_RenderPresent(Window::getWindow()->renderer);
 
 			lastFrame = SDL_GetTicks();
 		}
 	}
+	delete menu;
 	return EXIT_SUCCESS;
 }

@@ -159,7 +159,7 @@ void Menu::render()
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("logo"), NULL, &dst);
 		createText(Window::getWindow()->renderer, 310, 285, "olytris",
 			AssetsManager::getLib()->getFont("futuraCountdown"), A_SW);
-		createText(Window::getWindow()->renderer, 620, 285, "v1.0",
+		createText(Window::getWindow()->renderer, 620, 285, "v1.0.1",
 			AssetsManager::getLib()->getFont("futuraS"), A_SW);
 
 		dst = { 0, 980, 1920, 64 };

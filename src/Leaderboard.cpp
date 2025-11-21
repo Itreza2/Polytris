@@ -105,11 +105,6 @@ void Leaderboard::save()
 	for (Highscore line : leaderboardWeekly) {
 		file << line.serialize() << std::endl;
 	}
-	file = std::ofstream(
-		std::string(systemDrive) + "\\ProgramData\\Polytris\\last_session_week",
-		std::ofstream::trunc
-	);
-	file << std::format("{0:%OW}", currentDate).c_str();
 }
 
 void Leaderboard::render()
@@ -160,6 +155,21 @@ std::string Leaderboard::chronoText(Uint32 timer)
 {
 	return (std::to_string(timer / 60000) + "'"
 		+ std::to_string(timer / 1000 % 60) + "''");
+}
+
+void Leaderboard::saveSessionDate()
+{
+	char* systemDrive;
+	size_t uselessBuffer;
+
+	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
+	std::chrono::system_clock::time_point currentDate = std::chrono::system_clock::now();
+
+	std::ofstream file(
+		std::string(systemDrive) + "\\ProgramData\\Polytris\\last_session_week",
+		std::ofstream::trunc
+	);
+	file << std::format("{0:%OW}", currentDate).c_str();
 }
 
 bool Leaderboard::scoreGreaterThan(Highscore score1, Highscore score2) const
