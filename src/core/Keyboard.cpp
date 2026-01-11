@@ -1,5 +1,7 @@
 #include "Keyboard.h"
 
+Keyboard* Keyboard::instance = nullptr;
+
 Keyboard::Keyboard() 
 {
 	keyMapping = (unsigned int*)malloc(sizeof(unsigned int) * 21);

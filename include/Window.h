@@ -25,5 +25,3 @@ public:
 	void toggleFullscreen();
 
 };
-
-Window* Window::instance = nullptr;

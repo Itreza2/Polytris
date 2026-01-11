@@ -45,5 +45,3 @@ public:
 
 	bool keyDown(Key_ keyName, Caller_ caller = MAIN_MENU);
 };
-
-Keyboard* Keyboard::instance = nullptr;

@@ -12,7 +12,7 @@
 
 #include "Window.h"
 #include "AssetsManager.h"
-#include "textTools.cpp"
+#include "textTools.h"
 
 enum GameMode {
 	GM_MARATHON = 0,
@@ -54,6 +54,9 @@ private:
 	void render();
 
 	bool scoreGreaterThan(Highscore score1, Highscore score2) const;
+
+	// Necessary to ensure compatibility with gcc (std::chrono formatting not implemented)
+	static std::string getWeekString(const std::chrono::system_clock::time_point& tp);
 
 public:
 

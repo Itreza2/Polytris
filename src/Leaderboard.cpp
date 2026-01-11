@@ -23,7 +23,13 @@ Highscore::Highscore(std::string author, int score, int time)
 
 	time_t timestamp = std::time(NULL);
 	struct tm datetime;
+
+#ifdef _WIN32
 	localtime_s(&datetime, &timestamp);
+#else
+	localtime_r(&timestamp, &datetime);
+#endif
+	
 	char output[50];
 	strftime(output, 50, "%b %e %H:%M:%S %Y", &datetime);
 	date = output;
@@ -37,74 +43,105 @@ std::string Highscore::serialize()
 	);
 }
 
+std::string Leaderboard::getWeekString(const std::chrono::system_clock::time_point& tp)
+{
+	time_t timestamp = std::chrono::system_clock::to_time_t(tp);
+	struct tm datetime;
+	localtime_r(&timestamp, &datetime);
+	char buffer[10];
+	strftime(buffer, sizeof(buffer), "%W", &datetime);
+	return std::string(buffer);
+}
+
 void Leaderboard::load()
 {
 	std::string line;
 	std::vector<std::string> row;
-	char* systemDrive;
-	size_t uselessBuffer;
+	std::string configFolder;
 
 	leaderboard = {};
 	leaderboardWeekly = {};
 	int lastSession = -1;
 
+#ifdef _WIN32
+	char* systemDrive;
+	size_t uselessBuffer;
 	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
+	configFolder = std::string(systemDrive) + "\\ProgramData\\Polytris";
+#elif __linux__
+	configFolder = std::string(getenv("HOME")) + "/.config/Polytris";
+#endif
+
 	std::chrono::system_clock::time_point currentDate = std::chrono::system_clock::now();
 
 	std::ifstream file( // All-time leaderboard
-		std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores\\" + std::to_string(mode)
+		configFolder + "/highscores/" + std::to_string(mode)
 	);
 	if (file.is_open()) {
 		while (std::getline(file, line))
 			leaderboard.push_back(Highscore(line));
 	} file.close();
 	file = std::ifstream( // Week of last session
-		std::string(systemDrive) + "\\ProgramData\\Polytris\\last_session_week"
+		configFolder + "/last_session_week"
 	);
 	if (file.is_open()) {
 		std::getline(file, line);
 		lastSession = atoi(line.c_str());
 	}
 	file = std::ifstream( // Weekly leaderboard
-		std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores\\" + std::to_string(mode) + "w"
+		configFolder + "/highscores/" + std::to_string(mode) + "w"
 	);
-	if (file.is_open() && lastSession == atoi(std::format("{0:%OW}", currentDate).c_str())) {
+	if (file.is_open() && lastSession == atoi(getWeekString(currentDate).c_str())) {
 		while (std::getline(file, line))
 			leaderboardWeekly.push_back(Highscore(line));
 	} file.close();
+
+#ifdef _WIN32
 	free(systemDrive);
+#endif
 }
 
 void Leaderboard::save()
 {
+	std::string configFolder;
+
+#ifdef _WIN32
 	char* systemDrive;
 	size_t uselessBuffer;
-
 	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
+	configFolder = std::string(systemDrive) + "\\ProgramData\\Polytris";
+#elif __linux__
+	configFolder = std::string(getenv("HOME")) + "/.config/Polytris";
+#endif
+
 	std::chrono::system_clock::time_point currentDate = std::chrono::system_clock::now();
 
 	std::ofstream file(
-		std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores\\" + std::to_string(mode),
+		configFolder + "/highscores/" + std::to_string(mode),
 		std::ofstream::trunc
 	);
 	if (!file.is_open()) {
-		std::filesystem::create_directory(std::string(systemDrive) + "\\ProgramData\\Polytris");
-		std::filesystem::create_directory(std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores");
+		std::filesystem::create_directory(configFolder);
+		std::filesystem::create_directory(configFolder + "/highscores");
 	}
 	file = std::ofstream(
-		std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores\\" + std::to_string(mode),
+		configFolder + "/highscores/" + std::to_string(mode),
 		std::ofstream::trunc
 	);
 	for (Highscore line : leaderboard) {
 		file << line.serialize() << std::endl;
 	}
 	file = std::ofstream(
-		std::string(systemDrive) + "\\ProgramData\\Polytris\\highscores\\" + std::to_string(mode) + "w",
+		configFolder + "/highscores/" + std::to_string(mode) + "w",
 		std::ofstream::trunc
 	);
 	for (Highscore line : leaderboardWeekly) {
 		file << line.serialize() << std::endl;
 	}
+
+#ifdef _WIN32
+	free(systemDrive);
+#endif
 }
 
 void Leaderboard::render()
@@ -159,17 +196,28 @@ std::string Leaderboard::chronoText(Uint32 timer)
 
 void Leaderboard::saveSessionDate()
 {
+	std::string configFolder;
+
+#ifdef _WIN32
 	char* systemDrive;
 	size_t uselessBuffer;
-
 	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
+	configFolder = std::string(systemDrive) + "\\ProgramData\\Polytris";
+#elif __linux__
+	configFolder = std::string(getenv("HOME")) + "/.config/Polytris";
+#endif
+
 	std::chrono::system_clock::time_point currentDate = std::chrono::system_clock::now();
 
 	std::ofstream file(
-		std::string(systemDrive) + "\\ProgramData\\Polytris\\last_session_week",
+		configFolder + "/last_session_week",
 		std::ofstream::trunc
 	);
-	file << std::format("{0:%OW}", currentDate).c_str();
+	file << getWeekString(currentDate);
+
+#ifdef _WIN32
+	free(systemDrive);
+#endif
 }
 
 bool Leaderboard::scoreGreaterThan(Highscore score1, Highscore score2) const

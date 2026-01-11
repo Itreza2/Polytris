@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <unordered_map>
+#include <vector>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -37,5 +38,3 @@ public:
 	*/
 	void loadGroup(std::string path, SDL_Renderer* renderer);
 };
-
-AssetsManager* AssetsManager::instance = nullptr;

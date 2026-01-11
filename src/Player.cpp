@@ -13,7 +13,7 @@ void Player::newBlock()
 	queue.erase(queue.begin());
 
 	while (!randomCtr) {
-		int __cdecl test = random();
+		int test = random();
 		newType = test % 7;
 		if (typeQuantity[newType] < 2)
 			randomCtr = true;
@@ -115,7 +115,7 @@ void Player::renderGrid()
 	//Creation of the rendered grid
 	unsigned int* gridCopy = (unsigned int*)malloc(sizeof(unsigned int) * 200);
 	if (!gridCopy)
-		throw std::exception("Memory allocation faillure");
+		throw std::exception(); // gcc don't allow string literals for some reason ? I'll fix that later
 	for (int i = 0; i < 200; i++)
 		gridCopy[i] = grid[i];
 	currentBlock->lodge(gridCopy);
@@ -185,10 +185,10 @@ void Player::increaseLevel()
 	gravity = (Uint32)(1000 * std::pow(0.8 - ((level + 1) * 0.007), level + 1));
 }
 
-int __cdecl Player::random() 
+int Player::random() 
 {
 	if (mode == GM_VERSUS) { // Controled seeded random number generator
-		int __cdecl rand = rdmGen();
+		int rand = rdmGen();
 		return std::max(rand, -rand);
 	}
 	else // Default time-seeded random number generator
@@ -225,7 +225,7 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 	grid = (unsigned int*)malloc(sizeof(unsigned int) * 200);
 	typeQuantity = (unsigned int*)malloc(sizeof(unsigned int) * 7);
 	if (!grid || !typeQuantity)
-		throw std::exception("Memory allocation faillure");
+		throw std::exception(); // gcc don't allow string literals for some reason ? I'll fix that later
 	for (int i = 0; i < 200; i++)
 		grid[i] = 0;
 	for (int i = 0; i < 7; i++)

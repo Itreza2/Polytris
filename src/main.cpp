@@ -1,9 +1,6 @@
 #define SDL_MAIN_HANDLED
 
-#include <iostream>
 #include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
 
 #include "Window.h"
 #include "AssetsManager.h"

@@ -1,5 +1,9 @@
 #include "Block.h"
 
+std::vector<std::vector<std::vector<unsigned int>>> Block::SRS = {};
+std::vector<int> Block::wallKicks = {};
+bool Block::SRSImported = false;
+
 //Static Method
 void Block::loadSRS() 
 {

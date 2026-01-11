@@ -6,17 +6,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Source files
 set(SOURCES
+    src/core/Window.cpp
+    src/core/textTools.cpp
+    src/core/AssetsManager.cpp
+    src/core/Keyboard.cpp
     src/main.cpp
-    src/AssetsManager.cpp
     src/AttackBuffer.cpp
     src/Block.cpp
-    src/Keyboard.cpp
     src/Leaderboard.cpp
     src/Menu.cpp
     src/NameEntry.cpp
     src/Player.cpp
-    src/Window.cpp
-    src/textTools.cpp
 )
 
 find_package(SDL2 REQUIRED)
@@ -26,7 +26,7 @@ pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
 
 add_executable(polytris ${SOURCES})
 
-target_include_directories(polytris PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} src)
+target_include_directories(polytris PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} include src)
 target_link_libraries(polytris PRIVATE ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})
 
 # Ensure compiler sees pkg-config include/link flags if present

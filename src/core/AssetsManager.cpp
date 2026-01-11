@@ -1,5 +1,7 @@
 #include "AssetsManager.h"
 
+AssetsManager* AssetsManager::instance = nullptr;
+
 AssetsManager::AssetsManager() {
 	textures = {};
 	fonts = {};

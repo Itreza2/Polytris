@@ -6,7 +6,7 @@
 #include "Window.h"
 #include "AssetsManager.h"
 #include "Keyboard.h"
-#include "textTools.cpp"
+#include "textTools.h"
 
 const Uint32 CURSOR_CD = 300;
 const Uint32 LETTER_CD = 200;

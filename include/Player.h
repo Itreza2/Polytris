@@ -13,7 +13,7 @@
 #include "AttackBuffer.h"
 #include "NameEntry.h"
 
-#include "textTools.cpp"
+#include "textTools.h"
 
 const Uint32 ARR = 100;
 const Uint32 DAS = 200;
@@ -105,7 +105,7 @@ private:
 
 	void increaseLevel();
 
-	int __cdecl random();
+	int random();
 
 public:
 

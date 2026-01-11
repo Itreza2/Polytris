@@ -1,5 +1,7 @@
 #include "Window.h"
 
+Window* Window::instance = nullptr;
+
 Window::Window() {
 	SDL_Init(SDL_INIT_VIDEO);
 	IMG_Init(IMG_INIT_PNG);
