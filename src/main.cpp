@@ -10,7 +10,7 @@
 int main(unsigned int argc, char** argv) 
 {
 	//Initialize the window and load the assets
-	AssetsManager::getLib()->loadGroup("rsc\\assets.load", Window::getWindow()->renderer);
+	AssetsManager::getLib()->loadGroup("rsc/assets.load", Window::getWindow()->renderer);
 
 	Menu* menu = new Menu();
 

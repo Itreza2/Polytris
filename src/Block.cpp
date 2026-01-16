@@ -16,7 +16,7 @@ void Block::loadSRS()
 
 		SRS = {};									//SRS vector filling
 		for (int i = 0; i <= 6; i++) {
-			file.open(("rsc\\SRS\\" + std::to_string(i) + ".txt").c_str());
+			file.open(("rsc/SRS/" + std::to_string(i) + ".txt").c_str());
 			if (file.is_open()) {
 				SRS.push_back({});
 				while (std::getline(file, line)) {
@@ -40,7 +40,7 @@ void Block::loadSRS()
 			}
 		}
 		wallKicks = {};								//Wall kicks vector filling
-		file.open("rsc\\SRS\\wallKick.csv");
+		file.open("rsc/SRS/wallKick.csv");
 		if (file.is_open()) {
 			SRS.push_back({});
 			while (std::getline(file, line)) {

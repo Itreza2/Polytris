@@ -80,7 +80,7 @@ Menu::Menu()
 	attackBuffer = new AttackBuffer();
 
 	std::ifstream file;
-	file.open("rsc\\mainMenuMessage.txt");
+	file.open("rsc/mainMenuMessage.txt");
 	std::getline(file, message);
 }
 

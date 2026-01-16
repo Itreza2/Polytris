@@ -67,7 +67,7 @@ void Leaderboard::load()
 	char* systemDrive;
 	size_t uselessBuffer;
 	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
-	configFolder = std::string(systemDrive) + "\\ProgramData\\Polytris";
+	configFolder = std::string(systemDrive) + "/ProgramData/Polytris";
 #elif __linux__
 	configFolder = std::string(getenv("HOME")) + "/.config/Polytris";
 #endif
@@ -109,7 +109,7 @@ void Leaderboard::save()
 	char* systemDrive;
 	size_t uselessBuffer;
 	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
-	configFolder = std::string(systemDrive) + "\\ProgramData\\Polytris";
+	configFolder = std::string(systemDrive) + "/ProgramData/Polytris";
 #elif __linux__
 	configFolder = std::string(getenv("HOME")) + "/.config/Polytris";
 #endif
@@ -202,7 +202,7 @@ void Leaderboard::saveSessionDate()
 	char* systemDrive;
 	size_t uselessBuffer;
 	_dupenv_s(&systemDrive, &uselessBuffer, "SystemDrive");
-	configFolder = std::string(systemDrive) + "\\ProgramData\\Polytris";
+	configFolder = std::string(systemDrive) + "/ProgramData/Polytris";
 #elif __linux__
 	configFolder = std::string(getenv("HOME")) + "/.config/Polytris";
 #endif
