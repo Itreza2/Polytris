@@ -7,7 +7,7 @@ void Player::newBlock()
 	unsigned int newType;
 
 	if (currentBlock)
-		free(currentBlock);
+		delete currentBlock;
 	currentBlock = new Block(grid, queue.front());
 	typeQuantity[queue.front()]--;
 	queue.erase(queue.begin());
@@ -240,6 +240,7 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 		queue.push_back(bag[index]);
 		bag.erase(bag.begin() + index);
 	}
+	currentBlock = nullptr;
 	newBlock();
 
 	endTime = startTime = SDL_GetTicks();;
