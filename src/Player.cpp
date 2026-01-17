@@ -165,16 +165,18 @@ void Player::renderLineBreaks()
 
 void Player::collectGarbage()
 {
-	std::vector<int> line;
+	if (mode == GM_VERSUS) {
+		std::vector<int> line;
 
-	while ((line = attackBuffer->collect(type)).size()) {
-		for (int j = 0; j < 19; j++) {
+		while ((line = attackBuffer->collect(type)).size()) {
+			for (int j = 0; j < 19; j++) {
+				for (int i = 0; i < 10; i++)
+					grid[j * 10 + i] = grid[(j + 1) * 10 + i];
+			}
 			for (int i = 0; i < 10; i++)
-				grid[j * 10 + i] = grid[(j + 1) * 10 + i];
+				grid[190 + i] = line[i];
+			currentBlock->bounce();
 		}
-		for (int i = 0; i < 10; i++)
-			grid[190 + i] = line[i];
-		currentBlock->bounce();
 	}
 }
 
