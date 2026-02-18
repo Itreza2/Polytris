@@ -45,3 +45,8 @@ add_custom_command(TARGET polytris POST_BUILD
 
 install(TARGETS polytris RUNTIME DESTINATION bin)
 install(DIRECTORY rsc DESTINATION share/Polytris)
+
+add_custom_target(clean-all
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_BINARY_DIR}/cmake_clean.cmake
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_BINARY_DIR}
+)
