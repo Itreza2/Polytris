@@ -375,7 +375,7 @@ SDL_Texture* Player::render()
 	SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("grid"), NULL, NULL);
 	
 	if (held < 7) { //Held piece preview
-		src = { 50 * (int)held, 0, 50, 50 };
+		src = { 200 * (int)held, 0, 200, 200 };
 		dst = { 8, 8, 94, 94 };
 		SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blocksPreview"), &src, &dst);
 	} 
@@ -397,7 +397,7 @@ SDL_Texture* Player::render()
 	}
 	if (status != PS_IDLE && status != PS_READY) {
 		for (int i = 0; i < 5; i++) { //Bag preview
-			src = { 50 * (int)queue[i], 0, 50, 50 };
+			src = { 200 * (int)queue[i], 0, 200, 200 };
 			dst = { 472, 8 + i * 94, 94, 94 };
 			SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("blocksPreview"), &src, &dst);
 		}
