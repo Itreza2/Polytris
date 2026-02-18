@@ -152,7 +152,7 @@ void Player::renderLineBreaks()
 		src = { 64 * (int)((SDL_GetTicks() - lineBreak.spawnTime) / 50 % 12), 0, 64, 64 };
 		for (int i = 0; i < 10; i++) {
 			dst = { 110 + 32 * i, 6 + lineBreak.y * 32, 36, 36 };
-			SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("smoke"), &src, &dst);
+			SDL_RenderCopy(Window::getWindow()->renderer, AssetsManager::getLib()->getTexture("clear"), &src, &dst);
 		}
 		if ((SDL_GetTicks() - lineBreak.spawnTime) / 50 % 12 > 10) {
 			endedAnims.push_back(index);
