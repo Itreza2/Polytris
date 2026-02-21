@@ -45,7 +45,7 @@ void Player::eraseFull()
 	bool full;
 	int lineCount = 0;
 
-	for (int j = 0; j < 20; j++) {
+	for (int j = 16; j < 40; j++) {
 		full = true;
 		for (int i = 0; i < 10; i++) {
 			if (grid[j * 10 + i] == 0)
@@ -113,18 +113,18 @@ void Player::renderGrid()
 	int blockType;
 
 	//Creation of the rendered grid
-	unsigned int* gridCopy = (unsigned int*)malloc(sizeof(unsigned int) * 200);
+	unsigned int* gridCopy = (unsigned int*)malloc(sizeof(unsigned int) * 400);
 	if (!gridCopy)
 		throw std::exception(); // gcc don't allow string literals for some reason ? I'll fix that later
-	for (int i = 0; i < 200; i++)
+	for (int i = 0; i < 400; i++)
 		gridCopy[i] = grid[i];
 	currentBlock->lodge(gridCopy);
 
 	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 20; j++) {
+		for (int j = 20; j < 40; j++) {
 			blockType = static_cast<int>(gridCopy[j * 10 + i]);
 			src = { blockType * 64, 0, 64, 64 };
-			dst = { 112 + i * 32, 8 + j * 32, 32, 32 }; //112 ; 8 is the top-left corner of the board on the grid sprite
+			dst = { 112 + i * 32, 8 + (j - 20) * 32, 32, 32 }; //112 ; 8 is the top-left corner of the board on the grid sprite
 			SDL_RenderCopy(Window::getWindow()->renderer, blocks, &src, &dst);
 		}
 	}
@@ -134,7 +134,7 @@ void Player::renderGrid()
 		}
 		else if (grid[reflectionAnims[i].x * 10 + reflectionAnims[i].y]) {
 			src = { (int)((currentTime - reflectionAnims[i].spawnTime) / 50) * 64, 0, 64, 64 };
-			dst = { 112 + reflectionAnims[i].y * 32, 8 + reflectionAnims[i].x * 32, 32, 32 };
+			dst = { 112 + (reflectionAnims[i].y - 20) * 32, 8 + reflectionAnims[i].x * 32, 32, 32 };
 			SDL_RenderCopy(Window::getWindow()->renderer, reflections, &src, &dst);
 		}
 	}
@@ -169,7 +169,7 @@ void Player::collectGarbage()
 		std::vector<int> line;
 
 		while ((line = attackBuffer->collect(type)).size()) {
-			for (int j = 0; j < 19; j++) {
+			for (int j = 0; j < 39; j++) {
 				for (int i = 0; i < 10; i++)
 					grid[j * 10 + i] = grid[(j + 1) * 10 + i];
 			}
@@ -224,11 +224,11 @@ Player::Player(Caller_ type, GameMode mode, AttackBuffer* buffer, PlayerStatus d
 	UI = SDL_CreateTexture(Window::getWindow()->renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 576, 656);
 	SDL_SetTextureBlendMode(UI, SDL_BLENDMODE_BLEND);
 
-	grid = (unsigned int*)malloc(sizeof(unsigned int) * 200);
+	grid = (unsigned int*)malloc(sizeof(unsigned int) * 400);
 	typeQuantity = (unsigned int*)malloc(sizeof(unsigned int) * 7);
 	if (!grid || !typeQuantity)
 		throw std::exception(); // gcc don't allow string literals for some reason ? I'll fix that later
-	for (int i = 0; i < 200; i++)
+	for (int i = 0; i < 400; i++)
 		grid[i] = 0;
 	for (int i = 0; i < 7; i++)
 		typeQuantity[i] = 1;  //One of each piece in the starting queue
