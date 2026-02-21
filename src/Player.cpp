@@ -9,6 +9,8 @@ void Player::newBlock()
 	if (currentBlock)
 		delete currentBlock;
 	currentBlock = new Block(grid, queue.front());
+	currentBlock->bounce();
+	
 	typeQuantity[queue.front()]--;
 	queue.erase(queue.begin());
 

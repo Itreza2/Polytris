@@ -97,7 +97,7 @@ Block::Block(unsigned int* grid, unsigned int type)
 	loadSRS();
 
 	x = 3;
-	y = -2;
+	y = 18;
 	this->grid = grid;
 	this->type = type;
 	rotation = 0;
