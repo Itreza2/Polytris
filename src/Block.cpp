@@ -199,9 +199,10 @@ bool Block::lodge(unsigned int* grid_)
 			}
 			//Block itself
 			if (SRS[SRSIndex][j][i]) {
-				if (y + j >= 20 && y + j <= 39 && x + i >= 0 && x + i <= 9) {
+				if (y + j >= 0 && y + j <= 39 && x + i >= 0 && x + i <= 9) {
 					grid_[(y + j) * 10 + x + i] = type + 1;
-					out = false;
+					if (y + j >= 20)
+						out = false;
 				}
 			}
 		}
