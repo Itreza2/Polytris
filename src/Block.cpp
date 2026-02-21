@@ -186,7 +186,7 @@ bool Block::lodge(unsigned int* grid_)
 
 	unsigned int SRSIndex = type * 4 + rotation;
 	int shapeSize = static_cast<int>(SRS[SRSIndex].size());
-	bool out = false;
+	bool out = true;
 
 	for (int i = 0; i < shapeSize; i++) {
 		for (int j = 0; j < shapeSize; j++) {
@@ -201,8 +201,8 @@ bool Block::lodge(unsigned int* grid_)
 			if (SRS[SRSIndex][j][i]) {
 				if (y + j >= 20 && y + j <= 39 && x + i >= 0 && x + i <= 9) {
 					grid_[(y + j) * 10 + x + i] = type + 1;
+					out = false;
 				}
-				else out = true;
 			}
 		}
 	}
