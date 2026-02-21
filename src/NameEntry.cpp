@@ -56,12 +56,16 @@ std::string NameEntry::update()
 	if (keyboard->keyDown(KEY_UP, caller) && (currentTick - lastLetterMove) > LETTER_CD) {
 		if (content[cursor] > 'A')
 			content[cursor]--;
+		else
+			content[cursor] = 'Z';
 		lastLetterMove = currentTick;
 		toRender = true;
 	}
 	if (keyboard->keyDown(KEY_DOWN, caller) && (currentTick - lastLetterMove) > LETTER_CD) {
 		if (content[cursor] < 'Z')
 			content[cursor]++;
+		else
+			content[cursor] = 'A';
 		lastLetterMove = currentTick;
 		toRender = true;
 	}
