@@ -136,7 +136,7 @@ void Player::renderGrid()
 		}
 		else if (grid[reflectionAnims[i].x * 10 + reflectionAnims[i].y]) {
 			src = { (int)((currentTime - reflectionAnims[i].spawnTime) / 50) * 64, 0, 64, 64 };
-			dst = { 112 + (reflectionAnims[i].y - 20) * 32, 8 + reflectionAnims[i].x * 32, 32, 32 };
+			dst = { 112 + reflectionAnims[i].y * 32, 8 + (reflectionAnims[i].x - 20) * 32, 32, 32 };
 			SDL_RenderCopy(Window::getWindow()->renderer, reflections, &src, &dst);
 		}
 	}

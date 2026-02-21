@@ -269,7 +269,7 @@ std::vector<Reflection> Block::getReflections()
 
 	for (int j = 0; j < shapeSize; j++) {
 		for (int i = 0; i < shapeSize; i++) {
-			if (i + x >= 0 && i + x < 10 && j + y >= 0 && j + y < 20
+			if (i + x >= 0 && i + x < 10 && j + y >= 20 && j + y < 40
 				&& SRS[SRSIndex][j][i]) {
 				reflections.push_back({ i + x, j + y, SDL_GetTicks() });
 			}
