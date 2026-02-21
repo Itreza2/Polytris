@@ -89,14 +89,6 @@ bool Menu::update()
 	Keyboard* keyboard = Keyboard::getKeyboard();
 
 	if (inGame) {
-		if (keyboard->keyDown(KEY_EXIT)) {
-			submitScore(player1->getFinalScore());
-			submitScore(player2->getFinalScore());
-			inGame = false; //Back to main menu
-			delete player1;
-			delete player2;
-			lastModeChange = SDL_GetTicks();
-		}
 		if (player1->update()) {
 			if (attackBuffer->isOver())
 				newAttackBuffer();
@@ -114,6 +106,14 @@ bool Menu::update()
 				delete player2;
 				player2 = new Player(PLAYER_2, currentMode, attackBuffer);
 			}
+		}
+		if (keyboard->keyDown(KEY_EXIT)) {
+			submitScore(player1->getFinalScore());
+			submitScore(player2->getFinalScore());
+			inGame = false; //Back to main menu
+			delete player1;
+			delete player2;
+			lastModeChange = SDL_GetTicks();
 		}
 	}
 	else { //Main menu
