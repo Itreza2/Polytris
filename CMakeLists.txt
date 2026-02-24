@@ -4,6 +4,13 @@ project(Polytris VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Add SDL submodules
+set(SDL_X11_XTEST OFF CACHE BOOL "" FORCE)
+set(SDL_TEST OFF CACHE BOOL "" FORCE)
+add_subdirectory(external/SDL)
+add_subdirectory(external/SDL_image)
+add_subdirectory(external/SDL_ttf)
+
 # Source files
 set(SOURCES
     src/core/Window.cpp
@@ -19,23 +26,10 @@ set(SOURCES
     src/Player.cpp
 )
 
-find_package(SDL2 REQUIRED)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(SDL2_IMAGE REQUIRED SDL2_image)
-pkg_check_modules(SDL2_TTF REQUIRED SDL2_ttf)
-
 add_executable(polytris ${SOURCES})
 
-target_include_directories(polytris PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS} include src)
-target_link_libraries(polytris PRIVATE ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})
-
-# Ensure compiler sees pkg-config include/link flags if present
-foreach(flag ${SDL2_CFLAGS_OTHER})
-  string(STRIP "${flag}" flag)
-  if(flag)
-    target_compile_options(polytris PRIVATE ${flag})
-  endif()
-endforeach()
+target_include_directories(polytris PRIVATE include src)
+target_link_libraries(polytris PRIVATE SDL2::SDL2 SDL2_image::SDL2_image SDL2_ttf::SDL2_ttf)
 
 # Copy resource folder next to the executable after build
 add_custom_command(TARGET polytris POST_BUILD
