@@ -103,7 +103,7 @@ Block::Block(unsigned int* grid, unsigned int type)
 	rotation = 0;
 	
 	lastLockUpdate = 0;
-	lockDelay = 500;
+	lockDelay = LOCK_DELAY;
 	lockState = false;
 }
 
@@ -116,7 +116,7 @@ Block::Block(Block& object)
 	rotation = object.rotation;
 
 	lastLockUpdate = 0;
-	lockDelay = 500;
+	lockDelay = LOCK_DELAY;
 	lockState = false;
 }
 
@@ -136,6 +136,7 @@ bool Block::move(int direction)
 {
 	if (correctPlacement(x + direction, y, rotation)) {
 		x += direction;
+		lockDelay = LOCK_DELAY;
 		return true;
 	}
 	else
@@ -176,6 +177,7 @@ bool Block::rotate(int direction)
 			}
 		}
 	}
+	lockDelay = LOCK_DELAY;
 	return false;
 }
 
