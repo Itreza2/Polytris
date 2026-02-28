@@ -7,6 +7,8 @@
 #include <SDL.h> //GetTicks, should find a workaround
 #include <algorithm>
 
+const int LOCK_DELAY = 500;
+
 /**
 * @brief Struct used to keep track of the line break animations
 * /!\ To refactor soon /!\
